@@ -2,19 +2,25 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Paxlovid 給藥異常處理工具</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0071e3;
-            --secondary-color: #86868b;
-            --light-color: #f5f5f7;
-            --dark-color: #1d1d1f;
-            --warning-color: #ff3b30;
-            --success-color: #34c759;
-            --info-color: #0071e3;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --primary-color: #007AFF;
+            --secondary-color: #6E6E73;
+            --light-color: #F2F2F7;
+            --dark-color: #1C1C1E;
+            --warning-color: #FF3B30;
+            --success-color: #34C759;
+            --info-color: #007AFF;
+            --border-color: #AEAEB2;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --card-border: 1px solid rgba(174, 174, 178, 0.3);
+            --card-radius: 8px;
+            --button-radius: 8px;
+            --input-radius: 8px;
+            --transition-standard: all 0.2s ease-in-out;
         }
 
         * {
@@ -25,27 +31,28 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', sans-serif;
-            line-height: 1.5;
+            line-height: 1.4;
             color: var(--dark-color);
             background-color: var(--light-color);
-            padding: 40px 20px;
+            padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+            min-height: 100vh;
         }
 
         .container {
             max-width: 980px;
             margin: 0 auto;
             background-color: white;
-            border-radius: 18px;
+            border-radius: var(--card-radius);
             box-shadow: var(--card-shadow);
-            padding: 40px;
+            padding: 24px;
         }
 
         h1 {
-            font-size: 40px;
+            font-size: 28px;
             font-weight: 600;
             text-align: center;
             color: var(--dark-color);
-            margin-bottom: 40px;
+            margin-bottom: 24px;
             letter-spacing: -0.5px;
         }
 
@@ -64,18 +71,24 @@
         select, input {
             width: 100%;
             padding: 12px 16px;
-            border: 1px solid #d2d2d7;
-            border-radius: 8px;
-            font-size: 17px;
-            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            border-radius: var(--input-radius);
+            font-size: 16px;
+            transition: var(--transition-standard);
             background-color: white;
             color: var(--dark-color);
+            min-height: 44px;
         }
 
         select:focus, input:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        select:disabled, input:disabled {
+            background-color: #E0E0E0;
+            color: var(--border-color);
         }
 
         .input-section {
@@ -87,19 +100,20 @@
 
         .card {
             background-color: white;
-            border-radius: 12px;
+            border-radius: var(--card-radius);
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.2s ease;
+            border: var(--card-border);
+            transition: var(--transition-standard);
         }
 
         .card:hover {
             transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
         }
 
         .card-header {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 16px;
             color: var(--dark-color);
@@ -112,23 +126,23 @@
 
         .result-card {
             padding: 20px;
-            border-radius: 12px;
+            border-radius: var(--card-radius);
             margin-bottom: 20px;
-            transition: all 0.3s ease;
+            transition: var(--transition-standard);
         }
 
         .warning {
-            background-color: #fff1f0;
+            background-color: #FFF1F0;
             border-left: 4px solid var(--warning-color);
         }
 
         .info {
-            background-color: #f0f7ff;
+            background-color: #F0F7FF;
             border-left: 4px solid var(--info-color);
         }
 
         .success {
-            background-color: #f0fff4;
+            background-color: #F0FFF4;
             border-left: 4px solid var(--success-color);
         }
 
@@ -147,6 +161,33 @@
             margin-top: 40px;
             color: var(--secondary-color);
             font-size: 14px;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--button-radius);
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-standard);
+            min-height: 44px;
+            text-align: center;
+        }
+
+        .button:hover, .button:focus {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        .button.secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
         }
 
         @keyframes fadeIn {
@@ -155,17 +196,32 @@
         }
 
         .result-section > * {
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.2s ease-in-out;
         }
 
-        @media (max-width: 768px) {
+        /* Responsive Design */
+        @media (min-width: 768px) {
             .container {
-                padding: 20px;
+                padding: 32px;
+                margin-top: 24px;
+                margin-bottom: 24px;
             }
 
             h1 {
-                font-size: 32px;
-                margin-bottom: 24px;
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 20px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
             }
 
             .input-section {
@@ -177,6 +233,47 @@
                 padding: 16px;
             }
         }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light-color: #1C1C1E;
+                --dark-color: #FFFFFF;
+                --secondary-color: #8E8E93;
+                --border-color: #38383A;
+                --card-border: 1px solid rgba(84, 84, 88, 0.65);
+            }
+            
+            body {
+                background-color: #000000;
+            }
+            
+            .container, .card {
+                background-color: #1C1C1E;
+            }
+            
+            select, input {
+                background-color: #2C2C2E;
+                border-color: var(--border-color);
+                color: white;
+            }
+            
+            .warning {
+                background-color: rgba(255, 59, 48, 0.1);
+            }
+            
+            .info {
+                background-color: rgba(0, 122, 255, 0.1);
+            }
+            
+            .success {
+                background-color: rgba(52, 199, 89, 0.1);
+            }
+            
+            .dose-info {
+                background-color: #2C2C2E;
+            }
+        }
     </style>
 </head>
 <body>
@@ -186,7 +283,7 @@
         <div class="card">
             <div class="form-group">
                 <label for="renal-function">腎功能狀況</label>
-                <select id="renal-function">
+                <select id="renal-function" aria-label="腎功能狀況選單">
                     <option value="normal">正常：早晚各服用 2N+1R，共 10 劑次</option>
                     <option value="moderate">中度不全：早晚各服用 1N+1R，共 10 劑次</option>
                     <option value="severe">重度不全／血液透析：僅早上服用，第 1 劑 2N+1R，後 4 劑 1N+1R，共 5 劑次</option>
@@ -199,11 +296,11 @@
                 <div class="card-header">給藥資訊</div>
                 <div class="form-group">
                     <label for="dose-number">給藥錯誤的劑次 <span id="total-doses" class="dose-info">Total: 10</span></label>
-                    <input type="number" id="dose-number" min="1" max="10" value="1">
+                    <input type="number" id="dose-number" min="1" max="10" value="1" aria-label="給藥錯誤的劑次輸入框">
                 </div>
                 <div class="form-group">
                     <label for="time-since-error">距離給藥錯誤的時間（小時）</label>
-                    <input type="number" id="time-since-error" min="0" step="0.5" value="0">
+                    <input type="number" id="time-since-error" min="0" step="0.5" value="0" aria-label="距離給藥錯誤的時間輸入框">
                 </div>
             </div>
             
@@ -211,27 +308,27 @@
                 <div class="card-header">實際服藥量</div>
                 <div class="form-group">
                     <label for="actual-n">實際吃 Nirmatrelvir 錠數</label>
-                    <input type="number" id="actual-n" min="0" value="0">
+                    <input type="number" id="actual-n" min="0" value="0" aria-label="實際吃 Nirmatrelvir 錠數輸入框">
                 </div>
                 <div class="form-group">
                     <label for="actual-r">實際吃 Ritonavir 錠數</label>
-                    <input type="number" id="actual-r" min="0" value="0">
+                    <input type="number" id="actual-r" min="0" value="0" aria-label="實際吃 Ritonavir 錠數輸入框">
                 </div>
             </div>
         </div>
         
         <div class="result-section">
-            <div id="recommendation" class="result-card info">
+            <div id="recommendation" class="result-card info" role="region" aria-live="polite">
                 <div class="card-header">處理建議</div>
                 <div id="recommendation-text">請輸入完整資訊以獲取建議</div>
             </div>
             
-            <div id="pharmacy-refill" class="result-card info">
+            <div id="pharmacy-refill" class="result-card info" role="region" aria-live="polite">
                 <div class="card-header">藥局補發提示</div>
                 <div id="pharmacy-text">請輸入完整資訊以獲取補發建議</div>
             </div>
             
-            <div id="nursing-return" class="result-card info">
+            <div id="nursing-return" class="result-card info" role="region" aria-live="polite">
                 <div class="card-header">護理餘藥提示</div>
                 <div id="nursing-text">請輸入完整資訊以獲取餘藥建議</div>
             </div>
@@ -247,7 +344,7 @@
         </div>
         
         <div class="footer">
-            © 2025 AFTERNOON • Version 1.0.6 (nr)
+            2025 AFTERNOON Version 1.0.7 (nr)
         </div>
     </div>
 
