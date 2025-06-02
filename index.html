@@ -1182,12 +1182,12 @@
                         // 檢查是否也有多服 Nirmatrelvir
                         if (extraN > 0) {
                             return {
-                                text: `需補發 ${extraN} 顆 Nirmatrelvir。藥局無多餘 Ritonavir 可補發，建議最後 ${extraR} 劑各少服用 1 顆 Ritonavir。`,
+                                text: `需補發 ${extraN} 顆 Nirmatrelvir。藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
                                 level: 'warning'
                             };
                         } else {
                             return {
-                                text: `藥局無多餘 Ritonavir 可補發，建議最後 ${extraR} 劑各少服用 1 顆 Ritonavir。`,
+                                text: `藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
                                 level: 'warning'
                             };
                         }
@@ -1361,10 +1361,7 @@
             if (actualNValue === 0 && actualRValue === 0) {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>ℹ️</span><span>請輸入實際服藥量</span>';
-                return;
-            }
-            
-            if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
+            } else if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>✅</span><span>無異常，依原時程給藥</span>';
             } else if (missingR > 0) {
@@ -1648,7 +1645,7 @@
             if (skipNextDose) {
                 summaryText += `，建議跳過下一劑`;
             } else if (ritonavirReduction > 0) {
-                summaryText += `，最後 ${ritonavirReduction} 劑各少服用 1 顆 Ritonavir`;
+                summaryText += `，${ritonavirReduction === 1 ? '最後一劑' : `最後 ${ritonavirReduction} 劑各`}少服用 1 顆 Ritonavir`;
             }
             summary.textContent = summaryText;
         }
