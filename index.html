@@ -164,6 +164,76 @@
             padding-bottom: env(safe-area-inset-bottom, 0);
         }
 
+        /* 使用說明卡片樣式 */
+        .usage-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 8px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 12px;
+            background: rgba(0, 122, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: rgba(0, 122, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--dark-color);
+        }
+
+        .step-content p {
+            margin: 0;
+            color: var(--secondary-color);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 767px) {
+            .step {
+                padding: 10px;
+                gap: 12px;
+            }
+
+            .step-number {
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            .step-content p {
+                font-size: 13px;
+            }
+        }
+
         .button {
             display: inline-block;
             background-color: var(--primary-color);
@@ -792,6 +862,40 @@
 <body>
     <div class="container">
         <h1>Paxlovid 給藥異常處理工具</h1>
+        
+        <div class="card">
+            <div class="card-header">使用說明</div>
+            <div class="usage-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>選擇腎功能狀況</strong>
+                        <p>根據病人腎功能選擇適當的給藥方案</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>輸入給藥資訊</strong>
+                        <p>選擇發生錯誤的劑次，並輸入距離錯誤的時間（小時）</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>輸入實際服藥量</strong>
+                        <p>輸入病人實際服用的 Nirmatrelvir 和 Ritonavir 數量</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <strong>查看處理建議</strong>
+                        <p>系統會自動計算並顯示處理建議、補發提示和餘藥處理方式</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="card">
             <div class="form-group">
