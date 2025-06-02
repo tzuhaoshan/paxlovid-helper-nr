@@ -1480,13 +1480,15 @@
                 if (timeHours > 8 && (missingN > 0 || missingR > 0)) {
                     noActionDiv.innerHTML = `
                         <span>⏰</span>
-                        <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
+                        <span>已超過補救時間，此劑視為未服用，下一劑建議跳過</span>
                     `;
                 } else if (missingN === 0 && missingR === 0) {
                     if (actualN > shouldN || actualR > shouldR) {
+                        // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
+                        const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
                         noActionDiv.innerHTML = `
                             <span>⚠️</span>
-                            <span>建議監測臨床反應，下一劑依原時程</span>
+                            <span>建議監測臨床反應，${isDoubleDose ? '下一劑建議跳過' : '下一劑依原時程'}</span>
                         `;
                     } else {
                         noActionDiv.innerHTML = `
