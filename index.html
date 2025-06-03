@@ -1357,21 +1357,28 @@
             const container = document.getElementById('immediate-supplement');
             container.innerHTML = '';
 
-            // 不再於 actualN===0 && actualR===0 時提前 return，讓後續邏輯處理 missing 情境
+            // 1. 若有漏服且超過補救時間，優先顯示超時訊息
+            if ((missingN > 0 || missingR > 0) && timeHours > 8) {
+                const noActionDiv = document.createElement('div');
+                noActionDiv.className = 'no-action';
+                noActionDiv.innerHTML = `
+                    <span>⏰</span>
+                    <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
+                `;
+                container.appendChild(noActionDiv);
+                return;
+            }
 
-            // 判斷是否需要立即補吃
+            // 2. 在8小時內有漏服，顯示立即補吃
             let needSupplement = false;
             let supplementN = 0;
             let supplementR = 0;
             let supplementNote = '';
-
-            // 情況1：漏服且在8小時內
             if (timeHours <= 8) {
                 if (missingN > 0 || missingR > 0) {
                     needSupplement = true;
                     supplementN = missingN;
                     supplementR = missingR;
-                    
                     if (missingN > 0 && missingR > 0) {
                         supplementNote = `需要補吃漏服的 ${missingN} 顆 Nirmatrelvir 和 ${missingR} 顆 Ritonavir`;
                     } else if (missingN > 0) {
@@ -1381,76 +1388,65 @@
                     }
                 }
             }
-
             if (needSupplement) {
                 const actionDiv = document.createElement('div');
                 actionDiv.className = 'immediate-action';
-                
                 const timeRemaining = Math.max(0, 8 - timeHours);
-                
                 actionDiv.innerHTML = `
                     <div class="action-header">
                         <span class="action-icon">🚨</span>
                         <span>立即補吃</span>
                     </div>
-                    
                     <div class="countdown-timer">
                         <span class="timer-icon">⏰</span>
                         <span>還有 ${timeRemaining.toFixed(1)} 小時補救時間</span>
                     </div>
-                    
                     <div class="supplement-pills">
                         ${generateSupplementPills(supplementN, supplementR)}
                     </div>
-                    
                     <div class="supplement-count">
                         立即補吃：${supplementN > 0 ? supplementN + ' 顆 Nirmatrelvir' : ''}${supplementN > 0 && supplementR > 0 ? ' + ' : ''}${supplementR > 0 ? supplementR + ' 顆 Ritonavir' : ''}
                     </div>
-                    
                     <div class="supplement-note">
                         💡 ${supplementNote}
                     </div>
                 `;
-                
                 container.appendChild(actionDiv);
-            } else {
-                // 顯示無需立即行動
-                const noActionDiv = document.createElement('div');
-                noActionDiv.className = 'no-action';
-                
-                if (actualN === 0 && actualR === 0) {
+                return;
+            }
+
+            // 3. 其他情境
+            const noActionDiv = document.createElement('div');
+            noActionDiv.className = 'no-action';
+            // 僅當所有為零（初始狀態）才顯示"請輸入實際服藥量"
+            const extraN = Math.max(0, actualN - shouldN);
+            const extraR = Math.max(0, actualR - shouldR);
+            if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0 && actualN === 0 && actualR === 0) {
+                noActionDiv.innerHTML = `
+                    <span>ℹ️</span>
+                    <span>請輸入實際服藥量</span>
+                `;
+            } else if (missingN === 0 && missingR === 0) {
+                if (actualN > shouldN || actualR > shouldR) {
+                    // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
+                    const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
                     noActionDiv.innerHTML = `
-                        <span>ℹ️</span>
-                        <span>請輸入實際服藥量</span>
+                        <span>⚠️</span>
+                        <span>建議監測臨床反應，${isDoubleDose ? '下一劑建議跳過' : '下一劑依原時程'}</span>
                     `;
-                } else if (timeHours > 8 && (missingN > 0 || missingR > 0)) {
-                    noActionDiv.innerHTML = `
-                        <span>⏰</span>
-                        <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
-                    `;
-                } else if (missingN === 0 && missingR === 0) {
-                    if (actualN > shouldN || actualR > shouldR) {
-                        // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
-                        const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
-                        noActionDiv.innerHTML = `
-                            <span>⚠️</span>
-                            <span>建議監測臨床反應，${isDoubleDose ? '下一劑建議跳過' : '下一劑依原時程'}</span>
-                        `;
-                    } else {
-                        noActionDiv.innerHTML = `
-                            <span>✅</span>
-                            <span>服藥正確，無需立即行動</span>
-                        `;
-                    }
                 } else {
                     noActionDiv.innerHTML = `
-                        <span>ℹ️</span>
-                        <span>請依照處理建議執行</span>
+                        <span>✅</span>
+                        <span>服藥正確，無需立即行動</span>
                     `;
                 }
-                
-                container.appendChild(noActionDiv);
+            } else {
+                noActionDiv.innerHTML = `
+                    <span>ℹ️</span>
+                    <span>請依照處理建議執行</span>
+                `;
             }
+            container.appendChild(noActionDiv);
         }
 
         // 生成補吃藥錠的視覺化
