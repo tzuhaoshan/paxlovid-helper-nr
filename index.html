@@ -1152,6 +1152,17 @@
 
         // 計算藥局補發
         function calculatePharmacyRefill(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
+            // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
+            const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
+            
+            // 如果是 double dose，直接返回無需補發
+            if (isDoubleDose) {
+                return {
+                    text: `無藥品需補發。`,
+                    level: 'success'
+                };
+            }
+            
             // 1. 多服 Nirmatrelvir
             if (extraN > 0) {
                 return {
@@ -1184,7 +1195,7 @@
             
             // 3. 其他狀況
             return {
-                text: `不需進行任何補領。`,
+                text: `無藥品需補發。`,
                 level: 'success'
             };
         }
