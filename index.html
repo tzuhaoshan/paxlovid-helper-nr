@@ -1152,79 +1152,37 @@
 
         // 計算藥局補發
         function calculatePharmacyRefill(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
-            // 1. 漏服 Ritonavir 且 ≤ 8 小時
-            if (missingR > 0 && timeHours <= 8) {
-                if (actualN > 0) {
+            // 1. 多服 Nirmatrelvir
+            if (extraN > 0) {
+                return {
+                    text: `需補發 ${extraN} 顆 Nirmatrelvir。`,
+                    level: 'warning'
+                };
+            }
+            
+            // 2. 多服 Ritonavir
+            if (extraR > 0) {
+                // 計算剩餘劑次
+                const renal = renalFunction.value;
+                const doseNum = parseInt(doseNumber.value) || 1;
+                const totalDoses = (renal === 'severe') ? 5 : 10;
+                const remaining = calculateRemaining(renal, doseNum, totalDoses);
+                
+                // 檢查剩餘劑次是否足夠調整
+                if (remaining.doses >= extraR) {
                     return {
-                        text: `需補發 ${actualN} 顆 Nirmatrelvir，Ritonavir 由病人現場補吃，不需補發。`,
+                        text: `藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
                         level: 'warning'
                     };
                 } else {
                     return {
-                        text: `Ritonavir 由病人現場補吃，不需補發。`,
-                        level: 'info'
+                        text: `藥局無多餘 Ritonavir 可補發且剩餘劑次不足，請諮詢醫師。`,
+                        level: 'warning'
                     };
                 }
             }
             
-            // 2. 部分多服
-            if ((extraN > 0 || extraR > 0) && !(extraN >= shouldN && extraR >= shouldR)) {
-                // 2.1 如果多服了 Ritonavir（不論 Nirmatrelvir 的狀況）
-                if (extraR > 0) {
-                    // 計算剩餘劑次
-                    const renal = renalFunction.value;
-                    const doseNum = parseInt(doseNumber.value) || 1;
-                    const totalDoses = (renal === 'severe') ? 5 : 10;
-                    const remaining = calculateRemaining(renal, doseNum, totalDoses);
-                    
-                    // 檢查剩餘劑次是否足夠調整
-                    if (remaining.doses >= extraR) {
-                        // 檢查是否也有多服 Nirmatrelvir
-                        if (extraN > 0) {
-                            return {
-                                text: `需補發 ${extraN} 顆 Nirmatrelvir。藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
-                                level: 'warning'
-                            };
-                        } else {
-                            return {
-                                text: `藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
-                                level: 'warning'
-                            };
-                        }
-                    } else {
-                        // 剩餘劑次不足
-                        if (extraN > 0) {
-                            return {
-                                text: `需補發 ${extraN} 顆 Nirmatrelvir。藥局無多餘 Ritonavir 可補發且剩餘劑次不足，請諮詢醫師。`,
-                                level: 'warning'
-                            };
-                        } else {
-                            return {
-                                text: `藥局無多餘 Ritonavir 可補發且剩餘劑次不足，請諮詢醫師。`,
-                                level: 'warning'
-                            };
-                        }
-                    }
-                }
-                
-                // 2.2 只多服 Nirmatrelvir
-                if (extraN > 0 && extraR === 0) {
-                    return {
-                        text: `需補發 ${extraN} 顆 Nirmatrelvir。`,
-                        level: 'info'
-                    };
-                }
-            }
-            
-            // 3. 完整多服
-            if (extraN >= shouldN && extraR >= shouldR) {
-                return {
-                    text: `不需補發任何藥品。`,
-                    level: 'success'
-                };
-            }
-            
-            // 4. 其他狀況
+            // 3. 其他狀況
             return {
                 text: `不需進行任何補領。`,
                 level: 'success'
@@ -1422,23 +1380,21 @@
             let supplementR = 0;
             let supplementNote = '';
 
-            // 情況1：漏服 Ritonavir 且在8小時內
-            if (missingR > 0 && timeHours <= 8) {
-                needSupplement = true;
-                supplementN = shouldN;
-                supplementR = shouldR;
-                if (actualN > 0) {
-                    supplementNote = `由於漏服 Ritonavir，需重新服用完整劑量（原先服用的 ${actualN} 顆 Nirmatrelvir 視為無效）`;
-                } else {
-                    supplementNote = `需要服用完整劑量`;
+            // 情況1：漏服且在8小時內
+            if (timeHours <= 8) {
+                if (missingN > 0 || missingR > 0) {
+                    needSupplement = true;
+                    supplementN = missingN;
+                    supplementR = missingR;
+                    
+                    if (missingN > 0 && missingR > 0) {
+                        supplementNote = `需要補吃漏服的 ${missingN} 顆 Nirmatrelvir 和 ${missingR} 顆 Ritonavir`;
+                    } else if (missingN > 0) {
+                        supplementNote = `需要補吃漏服的 ${missingN} 顆 Nirmatrelvir`;
+                    } else if (missingR > 0) {
+                        supplementNote = `需要補吃漏服的 ${missingR} 顆 Ritonavir`;
+                    }
                 }
-            }
-            // 情況2：僅漏服 Nirmatrelvir 且在8小時內
-            else if (missingN > 0 && missingR === 0 && timeHours <= 8) {
-                needSupplement = true;
-                supplementN = missingN;
-                supplementR = 0;
-                supplementNote = `僅需補吃漏服的 ${missingN} 顆 Nirmatrelvir`;
             }
 
             if (needSupplement) {
