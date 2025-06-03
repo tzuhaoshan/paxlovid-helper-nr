@@ -1322,18 +1322,15 @@
             } else if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>✅</span><span>無異常，依原時程給藥</span>';
-            } else if (missingR > 0) {
-                indicator.className = 'status-indicator status-danger';
-                indicator.innerHTML = '<span>⚠️</span><span>漏服 Ritonavir，請查看處理建議</span>';
-            } else if (missingN > 0) {
+            } else if (extraN > 0) {
                 indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = '<span>⚡</span><span>僅漏服 Nirmatrelvir，請查看處理建議</span>';
-            } else if (extraN >= 2 && extraR >= 1) {
-                indicator.className = 'status-indicator status-danger';
-                indicator.innerHTML = '<span>⚠️</span><span>多服完整劑量，請查看處理建議</span>';
-            } else if (extraN > 0 || extraR > 0) {
+                indicator.innerHTML = '<span>⚡</span><span>多服 Nirmatrelvir，需補發藥品</span>';
+            } else if (extraR > 0) {
                 indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = '<span>⚡</span><span>部分多服，請查看處理建議</span>';
+                indicator.innerHTML = '<span>⚡</span><span>多服 Ritonavir，建議調整後續劑次</span>';
+            } else if (missingN > 0 || missingR > 0) {
+                indicator.className = 'status-indicator status-warning';
+                indicator.innerHTML = '<span>⚡</span><span>漏服藥品，請查看處理建議</span>';
             } else {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>✅</span><span>無異常，依原時程給藥</span>';
