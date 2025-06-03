@@ -1014,7 +1014,7 @@
         </div>
         
         <div class="footer">
-            2025 THS Version 1.0.8 (nr)
+            2025 THS Version 1.0.9 (nr)
         </div>
     </div>
 
@@ -1433,7 +1433,7 @@
                 if (timeHours > 8 && (missingN > 0 || missingR > 0)) {
                     noActionDiv.innerHTML = `
                         <span>⏰</span>
-                        <span>已超過補救時間，此劑視為未服用，下一劑建議跳過</span>
+                        <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
                     `;
                 } else if (missingN === 0 && missingR === 0) {
                     if (actualN > shouldN || actualR > shouldR) {
@@ -1509,14 +1509,13 @@
             if (isDoubleDose) {
                 // 如果是完整劑量多服，跳過下一劑
                 skipNextDose = true;
-            } else if (extraR > 0 && remainingDoses >= extraR) {
+            } else {
                 // 其他多服R的情況，在最後幾劑減少R
                 ritonavirReduction = extraR;
                 reductionStartFrom = remainingDoses - extraR + 1;
             }
 
             // 判斷是否需要調整劑次編號
-            let doseOffset = 0;
             let skipCurrentNote = '';
             if ((missingR > 0 || missingN > 0) && timeHours > 8) {
                 skipCurrentNote = '（當前異常劑次視為未服用）';
@@ -1599,7 +1598,8 @@
             let summaryText = `剩餘 ${remainingDoses} 劑次${skipCurrentNote}`;
             if (skipNextDose) {
                 summaryText += `，建議跳過下一劑`;
-            } else if (ritonavirReduction > 0) {
+            }
+            if (ritonavirReduction > 0) {
                 summaryText += `，${ritonavirReduction === 1 ? '最後一劑' : `最後 ${ritonavirReduction} 劑各`}少服用 1 顆 Ritonavir`;
             }
             summary.textContent = summaryText;
