@@ -1014,7 +1014,7 @@
         </div>
         
         <div class="footer">
-            2025 THS Version 1.0.9 (nr)
+            2025 THS Version 1.1.0 (nr)
         </div>
     </div>
 
@@ -1062,17 +1062,7 @@
                 doseNumber.value = totalDoses;
             }
             
-            // 檢查是否已輸入實際服藥量
-            if (actualNValue === 0 && actualRValue === 0) {
-                pharmacyText.textContent = "請輸入實際服藥量";
-                nursingText.textContent = "請輸入實際服藥量";
-                shouldDoseSpan.textContent = "-";
-                deviationSpan.textContent = "-";
-                remainingSpan.textContent = "-";
-                updateVisualization(0, 0, 0, 0, 0, 0, 0, 0, timeHours, doseNum, totalDoses, renal);
-                return;
-            }
-            
+            // 不再於actualNValue===0 && actualRValue===0時提前return，讓後續邏輯照常執行
             // 計算應服用量
             const shouldDose = calculateShouldDose(renal, doseNum);
             const shouldN = shouldDose.n;
@@ -1326,11 +1316,8 @@
             const actualNValue = parseInt(actualN.value) || 0;
             const actualRValue = parseInt(actualR.value) || 0;
             
-            // 檢查是否已輸入實際服藥量
-            if (actualNValue === 0 && actualRValue === 0) {
-                indicator.className = 'status-indicator status-normal';
-                indicator.innerHTML = '<span>ℹ️</span><span>請輸入實際服藥量</span>';
-            } else if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
+            // 移除 actualNValue===0 && actualRValue===0 的特殊分支，作為一般邏輯處理
+            if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>✅</span><span>無異常，依原時程給藥</span>';
             } else if (extraN > 0) {
@@ -1370,17 +1357,7 @@
             const container = document.getElementById('immediate-supplement');
             container.innerHTML = '';
 
-            // 檢查是否已輸入實際服藥量
-            if (actualN === 0 && actualR === 0) {
-                const noActionDiv = document.createElement('div');
-                noActionDiv.className = 'no-action';
-                noActionDiv.innerHTML = `
-                    <span>ℹ️</span>
-                    <span>請輸入實際服藥量</span>
-                `;
-                container.appendChild(noActionDiv);
-                return;
-            }
+            // 不再於 actualN===0 && actualR===0 時提前 return，讓後續邏輯處理 missing 情境
 
             // 判斷是否需要立即補吃
             let needSupplement = false;
@@ -1441,7 +1418,12 @@
                 const noActionDiv = document.createElement('div');
                 noActionDiv.className = 'no-action';
                 
-                if (timeHours > 8 && (missingN > 0 || missingR > 0)) {
+                if (actualN === 0 && actualR === 0) {
+                    noActionDiv.innerHTML = `
+                        <span>ℹ️</span>
+                        <span>請輸入實際服藥量</span>
+                    `;
+                } else if (timeHours > 8 && (missingN > 0 || missingR > 0)) {
                     noActionDiv.innerHTML = `
                         <span>⏰</span>
                         <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
