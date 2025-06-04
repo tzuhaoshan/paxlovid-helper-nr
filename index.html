@@ -1662,41 +1662,35 @@
                 return;
             }
 
-            // 2. 同時發生漏服與多服
+            // 2. 同時有漏服與多服（任一種藥物）
             if ((missingN > 0 || missingR > 0) && (extraN > 0 || extraR > 0)) {
-                let parts = [];
-                if (missingN > 0) parts.push(`漏服 Nirmatrelvir ${missingN} 顆`);
-                if (missingR > 0) parts.push(`漏服 Ritonavir ${missingR} 顆`);
-                if (extraN > 0) parts.push(`多服 Nirmatrelvir ${extraN} 顆`);
-                if (extraR > 0) parts.push(`多服 Ritonavir ${extraR} 顆`);
-                const detailText = parts.join('，');
+                let details = [];
+                if (missingN > 0) details.push(`漏服 Nirmatrelvir ${missingN} 顆`);
+                if (missingR > 0) details.push(`漏服 Ritonavir ${missingR} 顆`);
+                if (extraN > 0) details.push(`多服 Nirmatrelvir ${extraN} 顆`);
+                if (extraR > 0) details.push(`多服 Ritonavir ${extraR} 顆`);
                 indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = `<span>⚡</span><span>${detailText}</span>`;
+                indicator.innerHTML = `<span>⚡</span><span>${details.join('，')}</span>`;
                 return;
             }
 
-            // 3. 多服 Nirmatrelvir
-            if (extraN > 0) {
+            // 3. 只有多服（可多種藥物）
+            if (extraN > 0 || extraR > 0) {
+                let details = [];
+                if (extraN > 0) details.push(`多服 Nirmatrelvir ${extraN} 顆`);
+                if (extraR > 0) details.push(`多服 Ritonavir ${extraR} 顆`);
                 indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = `<span>⚡</span><span>多服 Nirmatrelvir ${extraN} 顆</span>`;
+                indicator.innerHTML = `<span>⚡</span><span>${details.join('，')}</span>`;
                 return;
             }
 
-            // 4. 多服 Ritonavir
-            if (extraR > 0) {
-                indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = `<span>⚡</span><span>多服 Ritonavir ${extraR} 顆</span>`;
-                return;
-            }
-
-            // 5. 漏服藥品
+            // 4. 只有漏服（可多種藥物）
             if (missingN > 0 || missingR > 0) {
-                let parts = [];
-                if (missingN > 0) parts.push(`漏服 Nirmatrelvir ${missingN} 顆`);
-                if (missingR > 0) parts.push(`漏服 Ritonavir ${missingR} 顆`);
-                const detailText = parts.join('，');
+                let details = [];
+                if (missingN > 0) details.push(`漏服 Nirmatrelvir ${missingN} 顆`);
+                if (missingR > 0) details.push(`漏服 Ritonavir ${missingR} 顆`);
                 indicator.className = 'status-indicator status-warning';
-                indicator.innerHTML = `<span>⚡</span><span>${detailText}</span>`;
+                indicator.innerHTML = `<span>⚡</span><span>${details.join('，')}</span>`;
                 return;
             }
         }
