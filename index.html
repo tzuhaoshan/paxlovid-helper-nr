@@ -31,24 +31,26 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', sans-serif;
-            line-height: 1.4;
+            font-size: 20px;
+            line-height: 1.5;
             color: var(--dark-color);
             background-color: var(--light-color);
-            padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 20px) env(safe-area-inset-left, 20px);
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 20px);
             min-height: 100vh;
         }
 
         .container {
-            max-width: 980px;
-            margin: 0 auto;
+            width: 100vw;
+            margin: 0;
             background-color: white;
-            border-radius: var(--card-radius);
-            box-shadow: var(--card-shadow);
-            padding: 24px;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 32px 16px;
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 600;
             text-align: center;
             color: var(--dark-color);
@@ -65,19 +67,19 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark-color);
-            font-size: 16px;
+            font-size: 18px; /* 放大標籤字體 */
         }
 
         select, input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 18px; /* 增加填充 */
             border: 1px solid var(--border-color);
             border-radius: var(--input-radius);
-            font-size: 16px;
+            font-size: 18px; /* 增大輸入框文字大小 */
             transition: var(--transition-standard);
             background-color: white;
             color: var(--dark-color);
-            min-height: 44px;
+            min-height: 50px; /* 增加高度，提升觸控面積 */
         }
 
         select:focus, input:focus {
@@ -101,9 +103,10 @@
         .card {
             background-color: white;
             border-radius: var(--card-radius);
-            padding: 24px;
-            margin-bottom: 24px;
+            padding: 32px; /* 增加卡片內距 */
+            margin-bottom: 32px;
             border: var(--card-border);
+            box-shadow: var(--card-shadow);
             transition: var(--transition-standard);
         }
 
@@ -113,7 +116,7 @@
         }
 
         .card-header {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             margin-bottom: 16px;
             color: var(--dark-color);
@@ -240,12 +243,12 @@
             color: white;
             border: none;
             border-radius: var(--button-radius);
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
+            padding: 14px 28px; /* 增大內距 */
+            font-size: 18px; /* 增大字體 */
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition-standard);
-            min-height: 44px;
+            min-height: 50px; /* 增加高度 */
             text-align: center;
         }
 
@@ -278,7 +281,7 @@
             }
 
             h1 {
-                font-size: 28px;
+                font-size: 32px;
             }
         }
 
@@ -288,19 +291,35 @@
                 border-radius: 0;
                 box-shadow: none;
             }
-
+            
             h1 {
-                font-size: 24px;
+                font-size: 28px;
                 margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            select, input {
+                font-size: 16px;
+                padding: 12px 16px;
+                min-height: 44px;
+            }
+            
+            .button {
+                font-size: 16px;
+                padding: 12px 24px;
+                min-height: 44px;
+            }
+
+            .card {
+                padding: 24px;
             }
 
             .input-section {
                 grid-template-columns: 1fr;
                 gap: 16px;
-            }
-
-            .card {
-                padding: 16px;
             }
         }
 
@@ -347,8 +366,8 @@
         }
 
         .pill.nirmatrelvir {
-            background: linear-gradient(135deg, #ff69b4, #ff1493);
-            box-shadow: 0 2px 4px rgba(255, 20, 147, 0.3);
+            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
+            box-shadow: 0 2px 4px rgba(235, 205, 199, 0.5);
         }
 
         .pill.ritonavir {
@@ -381,14 +400,14 @@
         }
 
         .pill-label {
-            font-size: 12px;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 8px;
             color: var(--secondary-color);
         }
 
         .pill-count {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 700;
             margin-top: 8px;
             color: var(--dark-color);
@@ -500,7 +519,7 @@
         }
 
         .schedule-header {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--secondary-color);
             margin-bottom: 12px;
@@ -570,7 +589,7 @@
         }
 
         .mini-pill.nirmatrelvir {
-            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
         }
 
         .mini-pill.ritonavir {
@@ -611,7 +630,7 @@
         }
 
         .summary-text {
-            font-size: 12px;
+            font-size: 16px;
             color: var(--primary-color);
             font-weight: 600;
         }
@@ -648,7 +667,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 700;
             color: #b45309;
             margin-bottom: 12px;
@@ -687,9 +706,9 @@
         }
 
         .supplement-pill.nirmatrelvir {
-            background: linear-gradient(135deg, #ff69b4, #ff1493);
-            border-color: #ff1493;
-            box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
+            border-color: #EBCDC7;
+            box-shadow: 0 0 10px rgba(235, 205, 199, 0.5);
         }
 
         .supplement-pill.ritonavir {
@@ -710,7 +729,7 @@
         }
 
         .supplement-count {
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 700;
             color: #b45309;
             text-align: center;
@@ -745,7 +764,7 @@
             justify-content: center;
             gap: 8px;
             margin: 8px 0;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 600;
             color: #d63384;
         }
@@ -857,9 +876,133 @@
                 background-color: #2C2C2E;
             }
         }
+/* 置中交班按鈕 */
+#handover-btn {
+    display: block;
+    margin: 24px auto 0; /* 上方 24px，水平置中 */
+    max-width: 200px;    /* 可視需求調整按鈕的最大寬度 */
+    width: 100%;
+}
+
+#copy-handover-btn {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 2px 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-standard);
+    font-size: 12px;
+    color: var(--primary-color);
+    /* 移除絕對定位相關屬性 */
+    /* position: absolute; */
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+    /* right: 12px; */
+    margin-left: 12px;
+}
+#copy-handover-btn:hover {
+    background-color: var(--light-color);
+}
+#copy-handover-btn:active {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+/* 交班 header 垂直置中 */
+.handover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+</style>
+    <style>
+        /* Modal 及遮罩樣式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--card-shadow);
+        }
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--dark-color);
+        }
+        .modal .form-group {
+            margin-bottom: 12px;
+        }
+        .modal label {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--input-radius);
+            color: var(--dark-color);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .modal-buttons .button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal 結構 -->
+    <div id="handover-modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">輸入交班資訊</div>
+            <div class="form-group">
+                <label for="pharmacist-id">處理藥師員工號</label>
+                <input type="text" id="pharmacist-id" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="reviewer-id">覆核藥師員工號</label>
+                <input type="text" id="reviewer-id" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="modal-medical-record">病歷號</label>
+                <input type="text" id="modal-medical-record" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="modal-remark">備註</label>
+                <input type="text" id="modal-remark" placeholder="">
+            </div>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="button secondary" type="button">取消</button>
+                <button id="modal-confirm" class="button" type="button">確定</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <h1>Paxlovid 給藥異常處理工具</h1>
         
@@ -877,7 +1020,7 @@
                     <div class="step-number">2</div>
                     <div class="step-content">
                         <strong>輸入給藥資訊</strong>
-                        <p>選擇發生錯誤的劑次，並輸入距離錯誤的時間（小時）</p>
+                        <p>選擇發生錯誤的劑次，並輸入原先預定給藥時間和處理時間</p>
                     </div>
                 </div>
                 <div class="step">
@@ -892,6 +1035,13 @@
                     <div class="step-content">
                         <strong>查看處理建議</strong>
                         <p>系統會自動計算並顯示處理建議、補發提示和餘藥處理方式</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <strong>交班</strong>
+                        <p>點擊「交班」按鈕，彈出視窗輸入交班資訊，確認後自動產生並複製交班內容。</p>
                     </div>
                 </div>
             </div>
@@ -916,8 +1066,12 @@
                     <input type="number" id="dose-number" min="1" max="10" value="1" aria-label="給藥錯誤的劑次輸入框">
                 </div>
                 <div class="form-group">
-                    <label for="time-since-error">距離給藥錯誤的時間（小時）</label>
-                    <input type="number" id="time-since-error" min="0" step="0.5" value="0" aria-label="距離給藥錯誤的時間輸入框">
+                    <label for="scheduled-time">原先預定給藥時間</label>
+                    <input type="datetime-local" id="scheduled-time" aria-label="原先預定給藥時間輸入框" placeholder="YYYY-MM-DDThh:mm" inputmode="numeric">
+                </div>
+                <div class="form-group">
+                    <label for="processing-time">處理時間</label>
+                    <input type="datetime-local" id="processing-time" aria-label="處理時間輸入框" placeholder="YYYY-MM-DDThh:mm" inputmode="numeric">
                 </div>
             </div>
             
@@ -1019,10 +1173,189 @@
     </div>
 
     <script>
+    // 轉換日期為本地 datetime-local 格式
+    function toLocalDateTimeString(date) {
+        const tzOffset = date.getTimezoneOffset() * 60000;
+        return new Date(date - tzOffset).toISOString().slice(0,16);
+    }
+    // 交班內容複製功能
+    // 在最末尾插入交班內容按鈕和隱藏區域
+    document.addEventListener('DOMContentLoaded', function() {
+        // 建立按鈕和隱藏區域
+        const btn = document.createElement('button');
+        btn.id = 'handover-btn';
+        btn.className = 'button secondary';
+        btn.type = 'button';
+        btn.textContent = '交班';
+        // btn.style.marginTop = '24px';
+
+        // 隱藏交班內容區域（含標題與複製按鈕）
+        const div = document.createElement('div');
+        div.id = 'handover-info';
+        div.style.display = 'none';
+        div.style.marginTop = '12px';
+        div.style.position = 'relative';
+        // header with title and copy button
+        const header = document.createElement('div');
+        header.className = 'handover-header';
+        header.style.padding = '8px 16px 8px 16px';
+        header.style.fontWeight = '600';
+        header.style.fontSize = '18px';
+        header.style.borderBottom = '1px solid var(--border-color)';
+        // 左側標題
+        const headerTitle = document.createElement('span');
+        headerTitle.textContent = 'Paxlovid給藥異常交班';
+        header.appendChild(headerTitle);
+        // copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.id = 'copy-handover-btn';
+        copyBtn.className = 'button secondary';
+        copyBtn.textContent = '複製交班內容';
+        // 移除絕對定位相關設定
+        // 不設定 position/top/right
+        header.appendChild(copyBtn);
+        div.appendChild(header);
+        // pre block
+        const pre = document.createElement('pre');
+        pre.id = 'handover-text';
+        pre.style.userSelect = 'all';
+        pre.style.fontSize = '15px';
+        pre.style.background = '#f8f9fa';
+        pre.style.padding = '12px';
+        pre.style.borderRadius = '6px';
+        pre.style.border = '1px solid #eee';
+        pre.style.marginTop = '8px';
+        div.appendChild(pre);
+
+        // 插入至 footer 前
+        const container = document.querySelector('.container');
+        const footer = document.querySelector('.footer');
+        container.insertBefore(btn, footer);
+        container.insertBefore(div, footer);
+
+        // 交班內容複製事件 (button click handler) - 改為開啟 Modal
+        document.getElementById('handover-btn').addEventListener('click', function() {
+            document.getElementById('handover-modal-overlay').style.display = 'flex';
+        });
+    });
+
+    // Modal 事件
+    // 點擊「取消」關閉 Modal，不做任何動作
+    document.getElementById('modal-cancel').addEventListener('click', function() {
+        document.getElementById('handover-modal-overlay').style.display = 'none';
+    });
+
+    // 點擊「確定」組成交班內容，複製並關閉 Modal
+    document.getElementById('modal-confirm').addEventListener('click', function() {
+        // 讀取 Modal 內輸入的留白值
+        const pharmacistID = document.getElementById('pharmacist-id').value.trim();
+        const reviewerID = document.getElementById('reviewer-id').value.trim();
+        const medicalRecord = document.getElementById('modal-medical-record').value.trim();
+        const remark = document.getElementById('modal-remark').value.trim();
+
+        // 從使用者輸入之「處理時間」讀值
+        const processingTimeVal = document.getElementById('processing-time').value;
+        // 計算「距離給藥錯誤的時間」
+        let timeDiffVal = '0.00';
+        const scheduledVal = scheduledTime.value;
+        const procVal = processingTimeVal;
+        if (scheduledVal && procVal) {
+            const scheduledDate = new Date(scheduledVal);
+            const procDate = new Date(procVal);
+            const diffMs = procDate - scheduledDate;
+            const hours = diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
+            timeDiffVal = String(Math.round(hours * 100) / 100);
+        }
+
+        // 讀取其他欄位
+        const renalStatus = document.getElementById('renal-function')
+            .options[document.getElementById('renal-function').selectedIndex].text;
+        const doseNumValue = document.getElementById('dose-number').value;
+        const scheduledValue = document.getElementById('scheduled-time').value;
+        const actualNValue = document.getElementById('actual-n').value;
+        const actualRValue = document.getElementById('actual-r').value;
+
+        // 取「異常狀態」
+        const statusSpans = document.getElementById('status-indicator').querySelectorAll('span');
+        const statusText = statusSpans.length > 1 ? statusSpans[1].innerText.trim() : '';
+
+        // 取「處理建議」
+        const immediateDiv = document.getElementById('immediate-supplement');
+        let immediateText = '';
+        if (immediateDiv.firstChild) {
+            immediateText = immediateDiv.firstChild.lastElementChild
+                ? immediateDiv.firstChild.lastElementChild.innerText.trim()
+                : immediateDiv.firstChild.innerText.trim();
+        }
+        if (!immediateText) immediateText = '無處理建議';
+
+        // 取「剩餘療程安排」
+        const remainingText = document.getElementById('schedule-summary').innerText.trim();
+
+        // 取「藥局補發提示」
+        const pharmacyTextValue = document.getElementById('pharmacy-text').innerText.trim();
+
+        // 取「護理餘藥提示」
+        const nursingTextValue = document.getElementById('nursing-text').innerText.trim();
+
+        // 組成交班內容（最上方加標題）
+        const handoverContent =
+`Paxlovid給藥異常交班
+處理藥師員工號：${pharmacistID}
+覆核藥師員工號：${reviewerID}
+病歷號：${medicalRecord}
+腎功能狀態：${renalStatus}
+給藥錯誤的劑次：${doseNumValue}
+原先預定給藥時間：${scheduledValue}
+處理時間：${processingTimeVal}
+距離給藥錯誤的時間（小時）：${timeDiffVal}
+實際服藥量：${actualNValue} 顆 Nirmatrelvir, ${actualRValue} 顆 Ritonavir
+異常狀態：${statusText}
+處理建議：${immediateText}
+剩餘療程安排：${remainingText}
+藥局補發提示：${pharmacyTextValue}
+護理餘藥提示：${nursingTextValue}
+備註：${remark}`;
+    // 點擊「複製交班內容」右上按鈕
+    document.getElementById('copy-handover-btn').addEventListener('click', function() {
+        const content = document.getElementById('handover-text').textContent;
+        try {
+            navigator.clipboard.writeText(content);
+        } catch (e) {
+            const range = document.createRange();
+            range.selectNodeContents(document.getElementById('handover-text'));
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    });
+
+        // 顯示並複製交班內容
+        const handoverDiv = document.getElementById('handover-info');
+        const handoverPre = document.getElementById('handover-text');
+        handoverPre.textContent = handoverContent;
+        handoverDiv.style.display = 'block';
+
+        try {
+            navigator.clipboard.writeText(handoverContent);
+            handoverPre.style.background = '#d1fae5';
+            setTimeout(() => { handoverPre.style.background = '#f8f9fa'; }, 900);
+        } catch (e) {
+            const range = document.createRange();
+            range.selectNodeContents(handoverPre);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        // 關閉 Modal
+        document.getElementById('handover-modal-overlay').style.display = 'none';
+    });
         // 獲取DOM元素
         const renalFunction = document.getElementById('renal-function');
         const doseNumber = document.getElementById('dose-number');
-        const timeSinceError = document.getElementById('time-since-error');
+        const scheduledTime = document.getElementById('scheduled-time');
+        const processingTime = document.getElementById('processing-time');
         const actualN = document.getElementById('actual-n');
         const actualR = document.getElementById('actual-r');
         const totalDosesSpan = document.getElementById('total-doses');
@@ -1037,7 +1370,8 @@
         // 監聽輸入變更
         renalFunction.addEventListener('change', updateUI);
         doseNumber.addEventListener('change', updateUI);
-        timeSinceError.addEventListener('change', updateUI);
+        scheduledTime.addEventListener('change', updateUI);
+        processingTime.addEventListener('change', updateUI);
         actualN.addEventListener('change', updateUI);
         actualR.addEventListener('change', updateUI);
 
@@ -1048,7 +1382,14 @@
         function updateUI() {
             const renal = renalFunction.value;
             const doseNum = parseInt(doseNumber.value) || 1;
-            const timeHours = parseFloat(timeSinceError.value) || 0;
+            let timeHours = 0;
+            if (scheduledTime.value && processingTime.value) {
+                const scheduledDate = new Date(scheduledTime.value);
+                const processingDate = new Date(processingTime.value);
+                const diffMs = processingDate - scheduledDate;
+                timeHours = diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
+            }
+            timeHours = Math.round(timeHours * 100) / 100;
             const actualNValue = parseInt(actualN.value) || 0;
             const actualRValue = parseInt(actualR.value) || 0;
             
@@ -1406,9 +1747,6 @@
                     </div>
                     <div class="supplement-count">
                         立即補吃：${supplementN > 0 ? supplementN + ' 顆 Nirmatrelvir' : ''}${supplementN > 0 && supplementR > 0 ? ' + ' : ''}${supplementR > 0 ? supplementR + ' 顆 Ritonavir' : ''}
-                    </div>
-                    <div class="supplement-note">
-                        💡 ${supplementNote}
                     </div>
                 `;
                 container.appendChild(actionDiv);
