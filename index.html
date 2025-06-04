@@ -981,11 +981,11 @@
         <div class="modal">
             <div class="modal-header">輸入交班資訊</div>
             <div class="form-group">
-                <label for="pharmacist-id">處理藥師員工號</label>
+                <label for="pharmacist-id">處理藥師員工號／姓名</label>
                 <input type="text" id="pharmacist-id" placeholder="">
             </div>
             <div class="form-group">
-                <label for="reviewer-id">覆核藥師員工號</label>
+                <label for="reviewer-id">覆核藥師員工號／姓名</label>
                 <input type="text" id="reviewer-id" placeholder="">
             </div>
             <div class="form-group">
@@ -1301,8 +1301,8 @@
         // 組成交班內容（最上方加標題）
         const handoverContent =
 `Paxlovid給藥異常交班
-處理藥師員工號：${pharmacistID}
-覆核藥師員工號：${reviewerID}
+處理藥師員工號／姓名：${pharmacistID}
+覆核藥師員工號／姓名：${reviewerID}
 病歷號：${medicalRecord}
 腎功能狀態：${renalStatus}
 給藥錯誤的劑次：${doseNumValue}
