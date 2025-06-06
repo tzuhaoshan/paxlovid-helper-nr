@@ -17,10 +17,11 @@
             --border-color: #AEAEB2;
             --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             --card-border: 1px solid rgba(174, 174, 178, 0.3);
-            --card-radius: 8px;
+            --card-radius: 12px;
             --button-radius: 8px;
             --input-radius: 8px;
-            --transition-standard: all 0.2s ease-in-out;
+            --transition-standard: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --progress-color: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
         }
 
         * {
@@ -31,122 +32,480 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', sans-serif;
-            font-size: 20px;
-            line-height: 1.5;
+            font-size: 18px;
+            line-height: 1.6;
             color: var(--dark-color);
-            background-color: var(--light-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             padding-top: env(safe-area-inset-top, 20px);
             padding-bottom: env(safe-area-inset-bottom, 20px);
             min-height: 100vh;
         }
 
         .container {
-            width: 100vw;
-            margin: 0;
-            background-color: white;
-            border-radius: 0;
-            box-shadow: none;
-            padding: 32px 16px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
+        /* Progress Bar Styles */
+        .progress-container {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+        }
+
+        .progress-header {
             text-align: center;
-            color: var(--dark-color);
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
+            margin-bottom: 30px;
         }
 
+        .progress-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            background: var(--progress-color);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-subtitle {
+            font-size: 16px;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 25px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--progress-color);
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            transition: var(--transition-standard);
+            border: 3px solid #e9ecef;
+            background: white;
+            color: var(--secondary-color);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle.active {
+            background: var(--progress-color);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .step-circle.completed {
+            background: var(--success-color);
+            color: white;
+            border-color: transparent;
+        }
+
+        .step-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+            margin-top: 8px;
+            transition: var(--transition-standard);
+        }
+
+        .step-label.active {
+            color: var(--primary-color);
+        }
+
+        .step-label.completed {
+            color: var(--success-color);
+        }
+
+        /* Step Card Styles */
+        .step-card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            margin-bottom: 30px;
+            min-height: 400px;
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .step-card.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--progress-color);
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 16px;
+            color: var(--secondary-color);
+            line-height: 1.5;
+        }
+
+        /* Form Styles */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
+            margin-bottom: 10px;
+            font-weight: 600;
             color: var(--dark-color);
-            font-size: 18px; /* 放大標籤字體 */
+            font-size: 16px;
         }
 
         select, input {
             width: 100%;
-            padding: 14px 18px; /* 增加填充 */
-            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border: 2px solid #e9ecef;
             border-radius: var(--input-radius);
-            font-size: 18px; /* 增大輸入框文字大小 */
+            font-size: 16px;
             transition: var(--transition-standard);
             background-color: white;
             color: var(--dark-color);
-            min-height: 50px; /* 增加高度，提升觸控面積 */
+            min-height: 56px;
         }
 
         select:focus, input:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+            transform: translateY(-2px);
         }
 
-        select:disabled, input:disabled {
-            background-color: #E0E0E0;
-            color: var(--border-color);
-        }
-
-        .input-section {
+        .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
+            gap: 20px;
         }
 
-        .card {
-            background-color: white;
-            border-radius: var(--card-radius);
-            padding: 32px; /* 增加卡片內距 */
-            margin-bottom: 32px;
-            border: var(--card-border);
-            box-shadow: var(--card-shadow);
-            transition: var(--transition-standard);
+        /* Button Styles */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 40px;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--card-shadow);
-        }
-
-        .card-header {
-            font-size: 20px;
+        .button {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: var(--button-radius);
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--dark-color);
-            letter-spacing: -0.3px;
-        }
-
-        .result-section {
-            margin-top: 32px;
-        }
-
-        .result-card {
-            padding: 20px;
-            border-radius: var(--card-radius);
-            margin-bottom: 20px;
+            cursor: pointer;
             transition: var(--transition-standard);
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .warning {
-            background-color: #FFF1F0;
-            border-left: 4px solid var(--warning-color);
+        .button.primary {
+            background: var(--progress-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
 
-        .info {
-            background-color: #F0F7FF;
-            border-left: 4px solid var(--info-color);
+        .button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
         }
 
-        .success {
-            background-color: #F0FFF4;
-            border-left: 4px solid var(--success-color);
+        .button.secondary {
+            background: transparent;
+            color: var(--secondary-color);
+            border: 2px solid #e9ecef;
+        }
+
+        .button.secondary:hover {
+            background: #f8f9fa;
+            border-color: var(--border-color);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Result Styles */
+        .result-section {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            margin-bottom: 30px;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .pill-comparison {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .pill-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 12px 0;
+            gap: 6px;
+            min-height: 40px;
+        }
+
+        .pill {
+            width: 28px;
+            height: 20px;
+            border-radius: 14px;
+            margin: 2px;
+            border: 2px solid rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pill.nirmatrelvir {
+            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
+            box-shadow: 0 3px 6px rgba(235, 205, 199, 0.5);
+        }
+
+        .pill.ritonavir {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border: 2px solid #dee2e6;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .pill.missing {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            border: 2px dashed #6c757d;
+            background: transparent !important;
+        }
+
+        .pill.extra {
+            animation: pulse-glow 2s infinite;
+            transform: scale(1.2);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 8px rgba(255, 193, 7, 0.8);
+                transform: scale(1.2);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(255, 193, 7, 1);
+                transform: scale(1.3);
+            }
+        }
+
+        .pill-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--secondary-color);
+        }
+
+        .pill-count {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 12px;
+            color: var(--dark-color);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .status-normal {
+            background: rgba(52, 199, 89, 0.1);
+            color: #1b5e20;
+            border: 2px solid rgba(52, 199, 89, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(255, 159, 10, 0.1);
+            color: #e65100;
+            border: 2px solid rgba(255, 159, 10, 0.3);
+        }
+
+        .status-danger {
+            background: rgba(255, 59, 48, 0.1);
+            color: #c62828;
+            border: 2px solid rgba(255, 59, 48, 0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .step-card {
+                padding: 25px;
+                min-height: 350px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .progress-step {
+                flex: 0 0 calc(20% - 10px);
+                min-width: 80px;
+            }
+
+            .step-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .step-label {
+                font-size: 10px;
+            }
+
+            .visual-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
         }
 
         .dose-info {
@@ -159,495 +518,12 @@
             color: var(--secondary-color);
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--secondary-color);
-            font-size: 14px;
-            padding-bottom: env(safe-area-inset-bottom, 0);
-        }
-
-        /* 使用說明卡片樣式 */
-        .usage-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            padding: 8px;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 12px;
-            background: rgba(0, 122, 255, 0.05);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .step:hover {
-            background: rgba(0, 122, 255, 0.1);
-            transform: translateX(4px);
-        }
-
-        .step-number {
-            width: 28px;
-            height: 28px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-content strong {
-            display: block;
-            margin-bottom: 4px;
-            color: var(--dark-color);
-        }
-
-        .step-content p {
-            margin: 0;
-            color: var(--secondary-color);
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        @media (max-width: 767px) {
-            .step {
-                padding: 10px;
-                gap: 12px;
-            }
-
-            .step-number {
-                width: 24px;
-                height: 24px;
-                font-size: 14px;
-            }
-
-            .step-content p {
-                font-size: 13px;
-            }
-        }
-
-        .button {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--button-radius);
-            padding: 14px 28px; /* 增大內距 */
-            font-size: 18px; /* 增大字體 */
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-standard);
-            min-height: 50px; /* 增加高度 */
-            text-align: center;
-        }
-
-        .button:hover, .button:focus {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
-
-        .button.secondary {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-section > * {
-            animation: fadeIn 0.2s ease-in-out;
-        }
-
-        /* Responsive Design */
-        @media (min-width: 768px) {
-            .container {
-                padding: 32px;
-                margin-top: 24px;
-                margin-bottom: 24px;
-            }
-
-            h1 {
-                font-size: 32px;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .container {
-                padding: 20px;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            
-            h1 {
-                font-size: 28px;
-                margin-bottom: 20px;
-            }
-
-            label {
-                font-size: 16px;
-            }
-
-            select, input {
-                font-size: 16px;
-                padding: 12px 16px;
-                min-height: 44px;
-            }
-            
-            .button {
-                font-size: 16px;
-                padding: 12px 24px;
-                min-height: 44px;
-            }
-
-            .card {
-                padding: 24px;
-            }
-
-            .input-section {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-        }
-
-        /* 新增視覺化樣式 */
-        .visual-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-radius: var(--card-radius);
-            padding: 20px;
-            margin: 16px 0;
-            border: var(--card-border);
-        }
-
-        .visual-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 16px;
-        }
-
-        .pill-comparison {
-            text-align: center;
-            padding: 16px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .pill-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 8px 0;
-            gap: 4px;
-        }
-
-        .pill {
-            width: 24px;
-            height: 16px;
-            border-radius: 12px;
-            margin: 2px;
-            border: 1px solid rgba(0,0,0,0.1);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .pill.nirmatrelvir {
-            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
-            box-shadow: 0 2px 4px rgba(235, 205, 199, 0.5);
-        }
-
-        .pill.ritonavir {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            border: 1.5px solid #dee2e6;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .pill.missing {
-            opacity: 0.3;
-            filter: grayscale(100%);
-            border: 2px dashed #6c757d;
-            background: transparent !important;
-        }
-
-        .pill.extra {
-            animation: pulse-glow 2s infinite;
-            transform: scale(1.1);
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { 
-                box-shadow: 0 0 5px rgba(255, 193, 7, 0.8);
-                transform: scale(1.1);
-            }
-            50% { 
-                box-shadow: 0 0 15px rgba(255, 193, 7, 1);
-                transform: scale(1.15);
-            }
-        }
-
-        .pill-label {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--secondary-color);
-        }
-
-        .pill-count {
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 8px;
-            color: var(--dark-color);
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 16px 0;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .status-normal {
-            background: rgba(52, 199, 89, 0.1);
-            color: #1b5e20;
-            border: 1px solid rgba(52, 199, 89, 0.3);
-        }
-
-        .status-warning {
-            background: rgba(255, 159, 10, 0.1);
-            color: #e65100;
-            border: 1px solid rgba(255, 159, 10, 0.3);
-        }
-
-        .status-danger {
-            background: rgba(255, 59, 48, 0.1);
-            color: #c62828;
-            border: 1px solid rgba(255, 59, 48, 0.3);
-        }
-
-        .time-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 16px 0;
-        }
-
-        .clock-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            position: relative;
-        }
-
-        .clock-safe {
-            border-color: var(--success-color);
-            background: rgba(52, 199, 89, 0.1);
-            color: var(--success-color);
-        }
-
-        .clock-warning {
-            border-color: var(--warning-color);
-            background: rgba(255, 159, 10, 0.1);
-            color: var(--warning-color);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 8px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .visual-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 16px;
-            font-size: 12px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .legend-pill {
-            width: 16px;
-            height: 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .remaining-schedule {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: var(--card-shadow);
-            margin-top: 16px;
-        }
-
-        .schedule-header {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .dose-timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .dose-day {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 6px;
-            background: #f8f9fa;
-            border-left: 3px solid #dee2e6;
-            transition: all 0.3s ease;
-        }
-
-        .dose-day.current {
-            background: rgba(0, 122, 255, 0.1);
-            border-left-color: var(--primary-color);
-        }
-
-        .dose-day.modified {
-            background: rgba(255, 159, 10, 0.1);
-            border-left-color: var(--warning-color);
-            animation: highlight 2s ease-in-out;
-        }
-
-        .dose-day.completed {
-            background: rgba(52, 199, 89, 0.1);
-            border-left-color: var(--success-color);
-            opacity: 0.7;
-        }
-
-        @keyframes highlight {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .dose-number {
-            font-weight: 700;
-            color: var(--primary-color);
-            min-width: 40px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .dose-pills {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .mini-pill {
-            width: 16px;
-            height: 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
-            margin: 1px;
-        }
-
-        .mini-pill.nirmatrelvir {
-            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
-        }
-
-        .mini-pill.ritonavir {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            border: 1px solid #dee2e6;
-        }
-
-        .mini-pill.reduced {
-            opacity: 0.5;
-            position: relative;
-        }
-
-        .mini-pill.reduced::after {
-            content: '✗';
-            position: absolute;
-            top: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        .dose-note {
-            font-size: 11px;
-            color: var(--warning-color);
-            font-weight: 500;
-            margin-left: 8px;
-        }
-
-        .schedule-summary {
-            background: rgba(0, 122, 255, 0.05);
-            border: 1px solid rgba(0, 122, 255, 0.2);
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 12px;
-            text-align: center;
-        }
-
-        .summary-text {
-            font-size: 16px;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .timeline-connector {
-            width: 2px;
-            height: 8px;
-            background: #dee2e6;
-            margin: 0 auto;
-        }
-
         .immediate-action {
             background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
             border: 2px solid var(--warning-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px 0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
             box-shadow: 0 4px 12px rgba(255, 159, 10, 0.3);
             animation: urgentPulse 2s infinite;
         }
@@ -666,777 +542,667 @@
         .action-header {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             font-size: 20px;
             font-weight: 700;
             color: #b45309;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .action-icon {
-            font-size: 20px;
+            font-size: 24px;
             animation: bounce 1s infinite;
         }
 
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-        }
-
-        .supplement-pills {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin: 12px 0;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 6px;
-            border: 1px dashed var(--warning-color);
-        }
-
-        .supplement-pill {
-            width: 32px;
-            height: 20px;
-            border-radius: 16px;
-            border: 2px solid;
-            position: relative;
-            animation: supplementGlow 1.5s infinite alternate;
-            margin: 2px;
-        }
-
-        .supplement-pill.nirmatrelvir {
-            background: linear-gradient(135deg, #F3E0DC, #EBCDC7);
-            border-color: #EBCDC7;
-            box-shadow: 0 0 10px rgba(235, 205, 199, 0.5);
-        }
-
-        .supplement-pill.ritonavir {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            border-color: #6c757d;
-            box-shadow: 0 0 10px rgba(108, 117, 125, 0.5);
-        }
-
-        @keyframes supplementGlow {
-            0% { 
-                transform: scale(1);
-                filter: brightness(100%);
-            }
-            100% { 
-                transform: scale(1.05);
-                filter: brightness(110%);
-            }
-        }
-
-        .supplement-count {
-            font-size: 18px;
-            font-weight: 700;
-            color: #b45309;
-            text-align: center;
-            margin-top: 8px;
-        }
-
-        .supplement-arrow {
-            font-size: 24px;
-            color: var(--warning-color);
-            animation: pointRight 1s infinite;
-        }
-
-        @keyframes pointRight {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(3px); }
-        }
-
-        .supplement-note {
-            font-size: 12px;
-            color: #856404;
-            text-align: center;
-            font-weight: 600;
-            margin-top: 8px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 4px;
-        }
-
-        .countdown-timer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 8px 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: #d63384;
-        }
-
-        .timer-icon {
-            animation: tick 1s infinite;
-        }
-
-        @keyframes tick {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            75% { transform: rotate(10deg); }
+            50% { transform: translateY(-4px); }
         }
 
         .no-action {
             background: rgba(52, 199, 89, 0.1);
-            border: 1px solid var(--success-color);
-            border-radius: 6px;
-            padding: 12px;
+            border: 2px solid var(--success-color);
+            border-radius: 12px;
+            padding: 16px;
             text-align: center;
             color: #155724;
             font-weight: 600;
-            margin: 16px 0;
+            margin: 20px 0;
         }
 
-        @media (max-width: 767px) {
-            .visual-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .pill {
-                width: 20px;
-                height: 14px;
-            }
-            
-            .visual-legend {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .dose-timeline {
-                gap: 6px;
-            }
-            
-            .dose-day {
-                padding: 6px 8px;
-            }
-            
-            .dose-number {
-                min-width: 30px;
-                font-size: 12px;
-            }
-            
-            .mini-pill {
-                width: 14px;
-                height: 8px;
-            }
-            
-            .supplement-pill {
-                width: 28px;
-                height: 18px;
-            }
-            
-            .immediate-action {
-                padding: 12px;
-            }
-            
-            .action-header {
-                font-size: 14px;
-            }
+        .summary-card {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(88, 86, 214, 0.05) 100%);
+            border: 2px solid rgba(0, 122, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --light-color: #1C1C1E;
-                --dark-color: #FFFFFF;
-                --secondary-color: #8E8E93;
-                --border-color: #38383A;
-                --card-border: 1px solid rgba(84, 84, 88, 0.65);
-            }
-            
-            body {
-                background-color: #000000;
-            }
-            
-            .container, .card {
-                background-color: #1C1C1E;
-            }
-            
-            select, input {
-                background-color: #2C2C2E;
-                border-color: var(--border-color);
-                color: white;
-            }
-            
-            .warning {
-                background-color: rgba(255, 59, 48, 0.1);
-            }
-            
-            .info {
-                background-color: rgba(0, 122, 255, 0.1);
-            }
-            
-            .success {
-                background-color: rgba(52, 199, 89, 0.1);
-            }
-            
-            .dose-info {
-                background-color: #2C2C2E;
-            }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
         }
-/* 置中交班按鈕 */
-#handover-btn {
-    display: block;
-    margin: 24px auto 0; /* 上方 24px，水平置中 */
-    max-width: 200px;    /* 可視需求調整按鈕的最大寬度 */
-    width: 100%;
-}
 
-#copy-handover-btn {
-    background-color: white;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 2px 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition-standard);
-    font-size: 12px;
-    color: var(--primary-color);
-    /* 移除絕對定位相關屬性 */
-    /* position: absolute; */
-    /* top: 50%; */
-    /* transform: translateY(-50%); */
-    /* right: 12px; */
-    margin-left: 12px;
-}
-#copy-handover-btn:hover {
-    background-color: var(--light-color);
-}
-#copy-handover-btn:active {
-    background-color: var(--secondary-color);
-    color: white;
-}
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 122, 255, 0.1);
+        }
 
-/* 交班 header 垂直置中 */
-.handover-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-</style>
-    <style>
-        /* Modal 及遮罩樣式 */
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            backdrop-filter: blur(5px);
         }
+
         .modal {
             background: white;
             border-radius: var(--card-radius);
-            padding: 24px;
+            padding: 30px;
             width: 90%;
-            max-width: 400px;
-            box-shadow: var(--card-shadow);
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
         }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         .modal-header {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
             color: var(--dark-color);
+            text-align: center;
         }
+
         .modal .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 20px;
         }
+
         .modal label {
             font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 4px;
+            font-weight: 600;
+            margin-bottom: 8px;
             display: block;
         }
+
         .modal input {
             width: 100%;
-            padding: 10px;
+            padding: 12px 16px;
             font-size: 16px;
-            border: 1px solid var(--border-color);
+            border: 2px solid #e9ecef;
             border-radius: var(--input-radius);
             color: var(--dark-color);
         }
+
         .modal-buttons {
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
-            margin-top: 16px;
+            gap: 15px;
+            margin-top: 25px;
         }
+
         .modal-buttons .button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 16px;
+            min-height: 48px;
+        }
+
+        .handover-content {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            user-select: all;
+        }
+
+        .copy-success {
+            background: rgba(52, 199, 89, 0.1) !important;
+            border-color: var(--success-color) !important;
+            animation: copyFlash 0.5s ease-out;
+        }
+
+        @keyframes copyFlash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
-    <!-- Modal 結構 -->
-    <div id="handover-modal-overlay" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">輸入交班資訊</div>
-            <div class="form-group">
-                <label for="pharmacist-id">處理藥師員工號／姓名</label>
-                <input type="text" id="pharmacist-id" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="reviewer-id">覆核藥師員工號／姓名</label>
-                <input type="text" id="reviewer-id" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="modal-medical-record">病歷號</label>
-                <input type="text" id="modal-medical-record" placeholder="">
-            </div>
-            <div class="form-group">
-                <label for="modal-remark">備註</label>
-                <input type="text" id="modal-remark" placeholder="">
-            </div>
-            <div class="modal-buttons">
-                <button id="modal-cancel" class="button secondary" type="button">取消</button>
-                <button id="modal-confirm" class="button" type="button">確定</button>
-            </div>
-        </div>
-    </div>
+    <!-- Modal 結構 已移除 -->
 
     <div class="container">
-        <h1>Paxlovid 給藥異常處理工具</h1>
-        
-        <div class="card">
-            <div class="card-header">使用說明</div>
-            <div class="usage-steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>選擇腎功能狀況</strong>
-                        <p>根據病人腎功能選擇適當的給藥方案</p>
-                    </div>
+        <!-- Progress Bar Section -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <h1 class="progress-title">Paxlovid 給藥異常處理工具</h1>
+                <p class="progress-subtitle">分步驟引導您完成給藥異常處理</p>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="progress-steps">
+                <div class="progress-step">
+                    <div class="step-circle active" id="step-circle-1">1</div>
+                    <div class="step-label active" id="step-label-1">腎功能</div>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>輸入給藥資訊</strong>
-                        <p>選擇發生錯誤的劑次，並輸入原先預定給藥時間和處理時間</p>
-                    </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step-circle-2">2</div>
+                    <div class="step-label" id="step-label-2">劑次資訊</div>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>輸入實際服藥量</strong>
-                        <p>輸入病人實際服用的 Nirmatrelvir 和 Ritonavir 數量</p>
-                    </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step-circle-3">3</div>
+                    <div class="step-label" id="step-label-3">時間設定</div>
                 </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <strong>查看處理建議</strong>
-                        <p>系統會自動計算並顯示處理建議、補發提示和餘藥處理方式</p>
-                    </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step-circle-4">4</div>
+                    <div class="step-label" id="step-label-4">服藥量</div>
                 </div>
-                <div class="step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <strong>交班</strong>
-                        <p>點擊「交班」按鈕，彈出視窗輸入交班資訊，確認後自動產生並複製交班內容。</p>
-                    </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step-circle-5">5</div>
+                    <div class="step-label" id="step-label-5">處理結果</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle" id="step-circle-6">6</div>
+                    <div class="step-label" id="step-label-6">交班</div>
                 </div>
             </div>
         </div>
-        
-        <div class="card">
+
+        <!-- Step 1: 腎功能選擇 -->
+        <div class="step-card active" id="step-1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">選擇腎功能狀況</h2>
+                <p class="step-description">請根據病人的腎功能狀況選擇適當的給藥方案</p>
+            </div>
+            
             <div class="form-group">
                 <label for="renal-function">腎功能狀況</label>
-                <select id="renal-function" aria-label="腎功能狀況選單">
+                <select id="renal-function">
+                    <option value="">請選擇腎功能狀況</option>
                     <option value="normal">正常：早晚各服用 2N+1R，共 10 劑次</option>
                     <option value="moderate">中度不全：早晚各服用 1N+1R，共 10 劑次</option>
                     <option value="severe">重度不全／血液透析：僅早上服用，第 1 劑 2N+1R，後 4 劑 1N+1R，共 5 劑次</option>
                 </select>
             </div>
+            
+            <div class="button-container">
+                <button class="button secondary" disabled>上一步</button>
+                <button class="button primary" id="next-step-1" disabled>下一步 →</button>
+            </div>
         </div>
-        
-        <div class="input-section">
-            <div class="card">
-                <div class="card-header">給藥資訊</div>
-                <div class="form-group">
-                    <label for="dose-number">給藥錯誤的劑次 <span id="total-doses" class="dose-info">Total: 10</span></label>
-                    <input type="number" id="dose-number" min="1" max="10" value="1" aria-label="給藥錯誤的劑次輸入框">
-                </div>
+
+        <!-- Step 2: 劑次選擇 -->
+        <div class="step-card" id="step-2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">選擇錯誤劑次</h2>
+                <p class="step-description">請選擇發生給藥錯誤的劑次編號</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="dose-number">給藥錯誤的劑次 <span id="total-doses" class="dose-info">Total: -</span></label>
+                <input type="number" id="dose-number" min="1" max="10" value="1" placeholder="請輸入劑次編號">
+            </div>
+            
+            <div class="button-container">
+                <button class="button secondary" id="prev-step-2">← 上一步</button>
+                <button class="button primary" id="next-step-2">下一步 →</button>
+            </div>
+        </div>
+
+        <!-- Step 3: 時間設定 -->
+        <div class="step-card" id="step-3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">設定時間資訊</h2>
+                <p class="step-description">請輸入原先預定的給藥時間以及發現問題的處理時間</p>
+            </div>
+            
+            <div class="input-grid">
                 <div class="form-group">
                     <label for="scheduled-time">原先預定給藥時間</label>
-                    <input type="datetime-local" id="scheduled-time" aria-label="原先預定給藥時間輸入框" placeholder="YYYY-MM-DDThh:mm" inputmode="numeric">
+                    <input type="datetime-local" id="scheduled-time" placeholder="YYYY-MM-DDThh:mm">
                 </div>
                 <div class="form-group">
                     <label for="processing-time">處理時間</label>
-                    <input type="datetime-local" id="processing-time" aria-label="處理時間輸入框" placeholder="YYYY-MM-DDThh:mm" inputmode="numeric">
+                    <input type="datetime-local" id="processing-time" placeholder="YYYY-MM-DDThh:mm">
                 </div>
             </div>
             
-            <div class="card">
-                <div class="card-header">實際服藥量</div>
-                <div class="form-group">
-                    <label for="actual-n">實際吃 Nirmatrelvir 錠數</label>
-                    <input type="number" id="actual-n" min="0" value="0" aria-label="實際吃 Nirmatrelvir 錠數輸入框">
-                </div>
-                <div class="form-group">
-                    <label for="actual-r">實際吃 Ritonavir 錠數</label>
-                    <input type="number" id="actual-r" min="0" value="0" aria-label="實際吃 Ritonavir 錠數輸入框">
-                </div>
+            <div class="button-container">
+                <button class="button secondary" id="prev-step-3">← 上一步</button>
+                <button class="button primary" id="next-step-3">下一步 →</button>
             </div>
         </div>
-        
-        <div class="result-section">
-            <!-- 新增視覺化區域 -->
-            <div class="visual-section">
-                <div class="card-header">處理建議</div>
-                
-                <div class="visual-grid">
-                    <!-- 藥錠對比視覺化 -->
-                    <div class="pill-comparison">
-                        <div class="pill-label">理論應服用量</div>
-                        <div class="pill-row" id="should-pills"></div>
-                        <div class="pill-count" id="should-count">-</div>
-                    </div>
-                    
-                    <div class="pill-comparison">
-                        <div class="pill-label">實際服用量</div>
-                        <div class="pill-row" id="actual-pills"></div>
-                        <div class="pill-count" id="actual-count">-</div>
-                    </div>
-                    
-                    <div class="pill-comparison">
-                        <div class="pill-label">療程進度</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill"></div>
-                        </div>
-                        <div class="pill-count" id="progress-text">-</div>
-                    </div>
+
+        <!-- Step 4: 實際服藥量 -->
+        <div class="step-card" id="step-4">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">輸入實際服藥量</h2>
+                <p class="step-description">請輸入病人該次錯誤劑次實際服用的 Nirmatrelvir 和 Ritonavir 數量</p>
+            </div>
+            
+            <div class="input-grid">
+                <div class="form-group">
+                    <label for="actual-n">實際服用 Nirmatrelvir 錠數</label>
+                    <input type="number" id="actual-n" min="0" value="0" placeholder="請輸入錠數">
                 </div>
-                
-                <!-- 狀態指示器 -->
-                <div class="status-indicator" id="status-indicator">
-                    <span>🔄</span>
-                    <span>等待輸入資料...</span>
+                <div class="form-group">
+                    <label for="actual-r">實際服用 Ritonavir 錠數</label>
+                    <input type="number" id="actual-r" min="0" value="0" placeholder="請輸入錠數">
                 </div>
-                
-                <!-- 時間指示器 -->
-                <div class="time-indicator" id="time-indicator">
-                    <div class="clock-icon clock-safe">
-                        <span>⏰</span>
-                    </div>
-                    <span id="time-status">請輸入給藥錯誤時間</span>
+            </div>
+            
+            <div class="button-container">
+                <button class="button secondary" id="prev-step-4">← 上一步</button>
+                <button class="button primary" id="next-step-4">下一步 →</button>
+            </div>
+        </div>
+
+        <!-- Step 5: 處理結果 -->
+        <div class="step-card" id="step-5">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title">處理建議與結果</h2>
+                <p class="step-description">系統已分析您的輸入，以下是詳細的處理建議</p>
+            </div>
+
+            <!-- 異常分析 -->
+            <div class="summary-card">
+                <div class="summary-title">📋 異常分析</div>
+                <div class="summary-item">
+                    <span class="summary-label">腎功能狀況</span>
+                    <span class="summary-value" id="summary-renal">-</span>
                 </div>
-                
-                <!-- 立即補吃提示 -->
-                <div id="immediate-supplement"></div>
-                
-                <!-- 剩餘療程時間軸 -->
-                <div class="remaining-schedule">
-                    <div class="schedule-header">📅 剩餘療程安排</div>
-                    <div class="dose-timeline" id="dose-timeline">
-                        <!-- 動態生成的劑次時間軸 -->
-                    </div>
-                    <div class="schedule-summary">
-                        <div class="summary-text" id="schedule-summary">
-                            請輸入資料以查看療程安排
-                        </div>
-                    </div>
+                <div class="summary-item">
+                    <span class="summary-label">錯誤劑次</span>
+                    <span class="summary-value" id="summary-dose">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">延遲時間</span>
+                    <span class="summary-value" id="summary-delay">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">理論應服用量</span>
+                    <span class="summary-value" id="summary-should">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">實際服用量</span>
+                    <span class="summary-value" id="summary-actual">-</span>
                 </div>
             </div>
 
-            <div id="pharmacy-refill" class="result-card info" role="region" aria-live="polite">
-                <div class="card-header">藥局補發提示</div>
-                <div id="pharmacy-text">請輸入完整資訊以獲取補發建議</div>
+            <!-- 視覺化比較 -->
+            <div class="visual-grid">
+                <div class="pill-comparison">
+                    <div class="pill-label">理論應服用量</div>
+                    <div class="pill-row" id="should-pills"></div>
+                    <div class="pill-count" id="should-count">-</div>
+                </div>
+                
+                <div class="pill-comparison">
+                    <div class="pill-label">實際服用量</div>
+                    <div class="pill-row" id="actual-pills"></div>
+                    <div class="pill-count" id="actual-count">-</div>
+                </div>
+            </div>
+
+            <!-- 狀態指示器 -->
+            <div class="status-indicator" id="status-indicator">
+                <span>🔄</span>
+                <span>分析中...</span>
+            </div>
+
+            <!-- 立即處理建議 -->
+            <div id="immediate-supplement"></div>
+
+            <!-- 藥局補發提示 -->
+            <div class="result-section">
+                <h3 style="margin-bottom: 15px; color: var(--primary-color);">🏥 藥局補發提示</h3>
+                <div id="pharmacy-text" style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--info-color);">
+                    等待計算結果...
+                </div>
+            </div>
+
+            <!-- 護理餘藥提示 -->
+            <div class="result-section">
+                <h3 style="margin-bottom: 15px; color: var(--primary-color);">👩‍⚕️ 護理餘藥提示</h3>
+                <div id="nursing-text" style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--info-color);">
+                    等待計算結果...
+                </div>
             </div>
             
-            <div id="nursing-return" class="result-card info" role="region" aria-live="polite">
-                <div class="card-header">護理餘藥提示</div>
-                <div id="nursing-text">請輸入完整資訊以獲取餘藥建議</div>
+            <div class="button-container">
+                <button class="button secondary" id="prev-step-5">← 上一步</button>
+                <button class="button primary" id="next-step-5">下一步 →</button>
             </div>
-            
-            <div class="card" style="display: none;">
-                <div class="card-header">詳細分析</div>
-                <div id="analysis">
-                    <p><strong>理論應服用量：</strong> <span id="should-dose">-</span></p>
-                    <p><strong>偏差量分析：</strong> <span id="deviation">-</span></p>
-                    <p><strong>剩餘療程：</strong> <span id="remaining">-</span></p>
+        </div>
+
+
+        <!-- Step 6: 交班內容 -->
+        <div class="step-card" id="step-6">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <h2 class="step-title">交班</h2>
+                <p class="step-description">請將交班內容夾於交班本，交班給管理組藥師</p>
+            </div>
+            <div class="result-section">
+                <div class="result-header">
+                </div>
+                <div class="handover-content" id="handover-text"></div>
+                <div class="button-container">
+                    <button class="button secondary" id="prev-step-6">← 上一步</button>
+                    <button class="button primary" id="print-handover-btn">列印交班內容</button>
                 </div>
             </div>
         </div>
-        
-        <div class="footer">
-            2025 THS Version 1.1.1 (nr)
+
+        <div class="footer" style="text-align: center; margin-top: 40px; color: var(--secondary-color); font-size: 14px;">
+            2025 THS Version 2.0.0 (Step-by-Step)
+        </div>
+    </div>
+
+    <!-- Handover Info Modal -->
+    <div class="modal-overlay" id="handover-modal">
+        <div class="modal">
+            <div class="modal-header">請輸入交班資訊</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="pharmacist-id">處理藥師員工號／姓名</label>
+                    <input type="text" id="pharmacist-id" placeholder="請輸入處理藥師員工號／姓名">
+                </div>
+                <div class="form-group">
+                    <label for="reviewer-id">覆核藥師員工號／姓名</label>
+                    <input type="text" id="reviewer-id" placeholder="請輸入覆核藥師員工號／姓名">
+                </div>
+                <div class="form-group">
+                    <label for="modal-medical-record">病歷號</label>
+                    <input type="text" id="modal-medical-record" placeholder="請輸入病歷號">
+                </div>
+                <div class="form-group">
+                    <label for="modal-remark">備註</label>
+                    <input type="text" id="modal-remark" placeholder="請輸入備註">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="button secondary" id="modal-cancel">取消</button>
+                <button class="button primary" id="modal-confirm">確認</button>
+            </div>
         </div>
     </div>
 
     <script>
-    // 轉換日期為本地 datetime-local 格式
-    function toLocalDateTimeString(date) {
-        const tzOffset = date.getTimezoneOffset() * 60000;
-        return new Date(date - tzOffset).toISOString().slice(0,16);
-    }
-    // 交班內容複製功能
-    // 在最末尾插入交班內容按鈕和隱藏區域
-    document.addEventListener('DOMContentLoaded', function() {
-        // 建立按鈕和隱藏區域
-        const btn = document.createElement('button');
-        btn.id = 'handover-btn';
-        btn.className = 'button secondary';
-        btn.type = 'button';
-        btn.textContent = '交班';
-        // btn.style.marginTop = '24px';
+        // 全域變數
+        let currentStep = 1;
+        const totalSteps = 6;
+        let formData = {
+            renalFunction: '',
+            doseNumber: 1,
+            scheduledTime: '',
+            processingTime: '',
+            actualN: 0,
+            actualR: 0
+        };
 
-        // 隱藏交班內容區域（含標題與複製按鈕）
-        const div = document.createElement('div');
-        div.id = 'handover-info';
-        div.style.display = 'none';
-        div.style.marginTop = '12px';
-        div.style.position = 'relative';
-        // header with title and copy button
-        const header = document.createElement('div');
-        header.className = 'handover-header';
-        header.style.padding = '8px 16px 8px 16px';
-        header.style.fontWeight = '600';
-        header.style.fontSize = '18px';
-        header.style.borderBottom = '1px solid var(--border-color)';
-        // 左側標題
-        const headerTitle = document.createElement('span');
-        headerTitle.textContent = 'Paxlovid給藥異常交班';
-        header.appendChild(headerTitle);
-        // copy button
-        const copyBtn = document.createElement('button');
-        copyBtn.id = 'copy-handover-btn';
-        copyBtn.className = 'button secondary';
-        copyBtn.textContent = '複製交班內容';
-        // 移除絕對定位相關設定
-        // 不設定 position/top/right
-        header.appendChild(copyBtn);
-        div.appendChild(header);
-        // pre block
-        const pre = document.createElement('pre');
-        pre.id = 'handover-text';
-        pre.style.userSelect = 'all';
-        pre.style.fontSize = '15px';
-        pre.style.background = '#f8f9fa';
-        pre.style.padding = '12px';
-        pre.style.borderRadius = '6px';
-        pre.style.border = '1px solid #eee';
-        pre.style.marginTop = '8px';
-        div.appendChild(pre);
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressBar();
+            setupEventListeners();
+            
+            // 設定預設時間
+            const now = new Date();
+            const localTime = toLocalDateTimeString(now);
+            document.getElementById('processing-time').value = localTime;
 
-        // 插入至 footer 前
-        const container = document.querySelector('.container');
-        const footer = document.querySelector('.footer');
-        container.insertBefore(btn, footer);
-        container.insertBefore(div, footer);
+            // 設定預定時間為2小時前
+            const scheduledDate = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+            document.getElementById('scheduled-time').value = toLocalDateTimeString(scheduledDate);
 
-        // 交班內容複製事件 (button click handler) - 改為開啟 Modal
-        document.getElementById('handover-btn').addEventListener('click', function() {
-            document.getElementById('handover-modal-overlay').style.display = 'flex';
+            // 初始化 formData 的時間欄位
+            formData.processingTime = localTime;
+            formData.scheduledTime = toLocalDateTimeString(scheduledDate);
         });
-    });
 
-    // Modal 事件
-    // 點擊「取消」關閉 Modal，不做任何動作
-    document.getElementById('modal-cancel').addEventListener('click', function() {
-        document.getElementById('handover-modal-overlay').style.display = 'none';
-    });
-
-    // 點擊「確定」組成交班內容，複製並關閉 Modal
-    document.getElementById('modal-confirm').addEventListener('click', function() {
-        // 讀取 Modal 內輸入的留白值
-        const pharmacistID = document.getElementById('pharmacist-id').value.trim();
-        const reviewerID = document.getElementById('reviewer-id').value.trim();
-        const medicalRecord = document.getElementById('modal-medical-record').value.trim();
-        const remark = document.getElementById('modal-remark').value.trim();
-
-        // 從使用者輸入之「處理時間」讀值
-        const processingTimeVal = document.getElementById('processing-time').value;
-        // 計算「距離給藥錯誤的時間」
-        let timeDiffVal = '0.00';
-        const scheduledVal = scheduledTime.value;
-        const procVal = processingTimeVal;
-        if (scheduledVal && procVal) {
-            const scheduledDate = new Date(scheduledVal);
-            const procDate = new Date(procVal);
-            const diffMs = procDate - scheduledDate;
-            const hours = diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
-            timeDiffVal = String(Math.round(hours * 100) / 100);
+        // 轉換日期為本地 datetime-local 格式
+        function toLocalDateTimeString(date) {
+            const tzOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date - tzOffset).toISOString().slice(0,16);
         }
 
-        // 讀取其他欄位
-        const renalStatus = document.getElementById('renal-function')
-            .options[document.getElementById('renal-function').selectedIndex].text;
-        const doseNumValue = document.getElementById('dose-number').value;
-        const scheduledValue = document.getElementById('scheduled-time').value;
-        const actualNValue = document.getElementById('actual-n').value;
-        const actualRValue = document.getElementById('actual-r').value;
+        // 設定事件監聽器
+        function setupEventListeners() {
+            // Step 1 事件
+            document.getElementById('renal-function').addEventListener('change', function() {
+                formData.renalFunction = this.value;
+                updateNextButton(1, this.value !== '');
+                updateTotalDoses();
+            });
+            
+            document.getElementById('next-step-1').addEventListener('click', () => goToStep(2));
 
-        // 取「異常狀態」
-        const statusSpans = document.getElementById('status-indicator').querySelectorAll('span');
-        const statusText = statusSpans.length > 1 ? statusSpans[1].innerText.trim() : '';
+            // Step 2 事件
+            document.getElementById('dose-number').addEventListener('input', function() {
+                formData.doseNumber = parseInt(this.value) || 1;
+                updateNextButton(2, this.value !== '');
+            });
+            
+            document.getElementById('prev-step-2').addEventListener('click', () => goToStep(1));
+            document.getElementById('next-step-2').addEventListener('click', () => goToStep(3));
 
-        // 取「處理建議」
-        const immediateDiv = document.getElementById('immediate-supplement');
-        let immediateText = '';
-        if (immediateDiv.firstChild) {
-            immediateText = immediateDiv.firstChild.lastElementChild
-                ? immediateDiv.firstChild.lastElementChild.innerText.trim()
-                : immediateDiv.firstChild.innerText.trim();
-        }
-        if (!immediateText) immediateText = '無處理建議';
+            // Step 3 事件
+            const timeInputs = ['scheduled-time', 'processing-time'];
+            timeInputs.forEach(id => {
+                document.getElementById(id).addEventListener('change', function() {
+                    if (id === 'scheduled-time') {
+                        formData.scheduledTime = this.value;
+                    } else if (id === 'processing-time') {
+                        formData.processingTime = this.value;
+                    }
+                    // 不再依輸入啟用按鈕，維持始終可點
+                });
+            });
+            
+            document.getElementById('prev-step-3').addEventListener('click', () => goToStep(2));
+            document.getElementById('next-step-3').addEventListener('click', () => goToStep(4));
 
-        // 取「剩餘療程安排」
-        const remainingText = document.getElementById('schedule-summary').innerText.trim();
+            // Step 4 事件
+            const pillInputs = ['actual-n', 'actual-r'];
+            pillInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    const key = id.replace('-', '').replace('actual', 'actual');
+                    formData[key === 'actualn' ? 'actualN' : 'actualR'] = parseInt(this.value) || 0;
+                    
+                    // 當輸入任何數值時就可以進入下一步
+                    const hasInput = pillInputs.some(inputId => 
+                        document.getElementById(inputId).value !== '' && 
+                        parseInt(document.getElementById(inputId).value) >= 0
+                    );
+                    updateNextButton(4, hasInput);
+                });
+            });
+            
+            document.getElementById('prev-step-4').addEventListener('click', () => goToStep(3));
+            document.getElementById('next-step-4').addEventListener('click', () => {
+                calculateResults();
+                goToStep(5);
+            });
 
-        // 取「藥局補發提示」
-        const pharmacyTextValue = document.getElementById('pharmacy-text').innerText.trim();
-
-        // 取「護理餘藥提示」
-        const nursingTextValue = document.getElementById('nursing-text').innerText.trim();
-
-        // 組成交班內容（最上方加標題）
-        const handoverContent =
-`Paxlovid給藥異常交班
-處理藥師員工號／姓名：${pharmacistID}
-覆核藥師員工號／姓名：${reviewerID}
-病歷號：${medicalRecord}
-腎功能狀態：${renalStatus}
-給藥錯誤的劑次：${doseNumValue}
-原先預定給藥時間：${scheduledValue}
-處理時間：${processingTimeVal}
-距離給藥錯誤的時間（小時）：${timeDiffVal}
-實際服藥量：${actualNValue} 顆 Nirmatrelvir, ${actualRValue} 顆 Ritonavir
-異常狀態：${statusText}
-處理建議：${immediateText}
-剩餘療程安排：${remainingText}
-藥局補發提示：${pharmacyTextValue}
-護理餘藥提示：${nursingTextValue}
-備註：${remark}`;
-    // 點擊「複製交班內容」右上按鈕
-    document.getElementById('copy-handover-btn').addEventListener('click', function() {
-        const content = document.getElementById('handover-text').textContent;
-        try {
-            navigator.clipboard.writeText(content);
-        } catch (e) {
-            const range = document.createRange();
-            range.selectNodeContents(document.getElementById('handover-text'));
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-    });
-
-        // 顯示並複製交班內容
-        const handoverDiv = document.getElementById('handover-info');
-        const handoverPre = document.getElementById('handover-text');
-        handoverPre.textContent = handoverContent;
-        handoverDiv.style.display = 'block';
-
-        try {
-            navigator.clipboard.writeText(handoverContent);
-            handoverPre.style.background = '#d1fae5';
-            setTimeout(() => { handoverPre.style.background = '#f8f9fa'; }, 900);
-        } catch (e) {
-            const range = document.createRange();
-            range.selectNodeContents(handoverPre);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
+            // Step 5 事件
+            document.getElementById('prev-step-5').addEventListener('click', () => goToStep(4));
+            document.getElementById('next-step-5').addEventListener('click', showHandoverModal);
+            // Modal 事件
+            document.getElementById('modal-cancel').addEventListener('click', () => {
+                document.getElementById('handover-modal').style.display = 'none';
+            });
+            document.getElementById('modal-confirm').addEventListener('click', () => {
+                document.getElementById('handover-modal').style.display = 'none';
+                calculateResults();
+                generateHandover();
+                goToStep(6);
+            });
+            document.getElementById('print-handover-btn').addEventListener('click', printHandover);
+            document.getElementById('prev-step-6').addEventListener('click', () => goToStep(5));
         }
 
-        // 關閉 Modal
-        document.getElementById('handover-modal-overlay').style.display = 'none';
-    });
-        // 獲取DOM元素
-        const renalFunction = document.getElementById('renal-function');
-        const doseNumber = document.getElementById('dose-number');
-        const scheduledTime = document.getElementById('scheduled-time');
-        const processingTime = document.getElementById('processing-time');
-        const actualN = document.getElementById('actual-n');
-        const actualR = document.getElementById('actual-r');
-        const totalDosesSpan = document.getElementById('total-doses');
-        const pharmacyText = document.getElementById('pharmacy-text');
-        const pharmacyCard = document.getElementById('pharmacy-refill');
-        const nursingText = document.getElementById('nursing-text');
-        const nursingCard = document.getElementById('nursing-return');
-        const shouldDoseSpan = document.getElementById('should-dose');
-        const deviationSpan = document.getElementById('deviation');
-        const remainingSpan = document.getElementById('remaining');
+        function showHandoverModal() {
+            // 先計算第五步的結果
+            calculateResults();
+            // 顯示 modal
+            document.getElementById('handover-modal').style.display = 'flex';
+        }
 
-        // 監聽輸入變更
-        renalFunction.addEventListener('change', updateUI);
-        doseNumber.addEventListener('change', updateUI);
-        scheduledTime.addEventListener('change', updateUI);
-        processingTime.addEventListener('change', updateUI);
-        actualN.addEventListener('change', updateUI);
-        actualR.addEventListener('change', updateUI);
+        // 更新進度條
+        function updateProgressBar() {
+            const percentage = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            
+            // 更新步驟圓圈和標籤
+            for (let i = 1; i <= totalSteps; i++) {
+                const circle = document.getElementById(`step-circle-${i}`);
+                const label = document.getElementById(`step-label-${i}`);
+                if (!circle || !label) continue;
+                circle.classList.remove('active', 'completed');
+                label.classList.remove('active', 'completed');
+                
+                if (i < currentStep) {
+                    circle.classList.add('completed');
+                    label.classList.add('completed');
+                    circle.innerHTML = '✓';
+                } else if (i === currentStep) {
+                    circle.classList.add('active');
+                    label.classList.add('active');
+                    circle.innerHTML = i;
+                } else {
+                    circle.innerHTML = i;
+                }
+            }
+        }
 
-        // 初始化UI
-        updateUI();
+        // 切換步驟
+        function goToStep(step) {
+            // 隱藏當前步驟
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            
+            // 顯示目標步驟
+            currentStep = step;
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            // 更新進度條
+            updateProgressBar();
+            
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-        // 更新UI和計算結果
-        function updateUI() {
-            const renal = renalFunction.value;
-            const doseNum = parseInt(doseNumber.value) || 1;
+        // 更新下一步按鈕狀態
+        function updateNextButton(step, enabled) {
+            const button = document.getElementById(`next-step-${step}`);
+            if (button) {
+                button.disabled = !enabled;
+            }
+        }
+
+        // 更新總劑次顯示
+        function updateTotalDoses() {
+            const renal = formData.renalFunction;
+            const totalDoses = (renal === 'severe') ? 5 : 10;
+            document.getElementById('total-doses').textContent = `Total: ${totalDoses}`;
+            
+            // 更新劑次輸入框的最大值
+            const doseInput = document.getElementById('dose-number');
+            doseInput.max = totalDoses;
+            if (parseInt(doseInput.value) > totalDoses) {
+                doseInput.value = totalDoses;
+                formData.doseNumber = totalDoses;
+            }
+        }
+
+        // 計算結果
+        function calculateResults() {
+            const renal = formData.renalFunction;
+            const doseNum = formData.doseNumber;
+            const scheduledTime = formData.scheduledTime;
+            const processingTime = formData.processingTime;
+            const actualN = formData.actualN;
+            const actualR = formData.actualR;
+
+            // 計算時間差
             let timeHours = 0;
-            if (scheduledTime.value && processingTime.value) {
-                const scheduledDate = new Date(scheduledTime.value);
-                const processingDate = new Date(processingTime.value);
+            if (scheduledTime && processingTime) {
+                const scheduledDate = new Date(scheduledTime);
+                const processingDate = new Date(processingTime);
                 const diffMs = processingDate - scheduledDate;
                 timeHours = diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
             }
             timeHours = Math.round(timeHours * 100) / 100;
-            const actualNValue = parseInt(actualN.value) || 0;
-            const actualRValue = parseInt(actualR.value) || 0;
-            
-            // 更新總劑次
-            const totalDoses = (renal === 'severe') ? 5 : 10;
-            totalDosesSpan.textContent = `Total: ${totalDoses}`;
-            
-            // 更新劑次輸入上限
-            doseNumber.max = totalDoses;
-            if (doseNum > totalDoses) {
-                doseNumber.value = totalDoses;
-            }
-            
-            // 不再於actualNValue===0 && actualRValue===0時提前return，讓後續邏輯照常執行
+
             // 計算應服用量
             const shouldDose = calculateShouldDose(renal, doseNum);
             const shouldN = shouldDose.n;
             const shouldR = shouldDose.r;
-            
-            // 計算偏差量
-            const missingN = Math.max(0, shouldN - actualNValue);
-            const missingR = Math.max(0, shouldR - actualRValue);
-            const extraN = Math.max(0, actualNValue - shouldN);
-            const extraR = Math.max(0, actualRValue - shouldR);
-            
-            // 計算剩餘療程
-            const remaining = calculateRemaining(renal, doseNum, totalDoses);
-            
-            // 更新顯示
-            shouldDoseSpan.textContent = `${shouldN} Nirmatrelvir + ${shouldR} Ritonavir`;
-            
-            deviationSpan.textContent = `漏服: ${missingN} Nirmatrelvir, ${missingR} Ritonavir; 多服: ${extraN} Nirmatrelvir, ${extraR} Ritonavir`;
-            
-            remainingSpan.textContent = `剩餘 ${remaining.doses} 劑次，需要 ${remaining.n} Nirmatrelvir 和 ${remaining.r} Ritonavir`;
-            
+
+            // 計算偏差
+            const missingN = Math.max(0, shouldN - actualN);
+            const missingR = Math.max(0, shouldR - actualR);
+            const extraN = Math.max(0, actualN - shouldN);
+            const extraR = Math.max(0, actualR - shouldR);
+
+            // 更新摘要
+            updateSummary(renal, doseNum, timeHours, shouldN, shouldR, actualN, actualR);
+
             // 更新視覺化
-            updateVisualization(shouldN, shouldR, actualNValue, actualRValue, missingN, missingR, extraN, extraR, timeHours, doseNum, totalDoses, renal);
-            
-            // 藥局補發提示
-            const pharmacyRefill = calculatePharmacyRefill(shouldN, shouldR, actualNValue, actualRValue, missingN, missingR, extraN, extraR, timeHours);
-            pharmacyText.textContent = pharmacyRefill.text;
-            pharmacyCard.className = `result-card ${pharmacyRefill.level}`;
-            
-            // 護理餘藥提示
-            const nursingReturn = calculateNursingReturn(shouldN, shouldR, actualNValue, actualRValue, missingN, missingR, extraN, extraR, timeHours);
-            nursingText.textContent = nursingReturn.text;
-            nursingCard.className = `result-card ${nursingReturn.level}`;
+            updateVisualization(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours);
+
+            // 更新處理建議
+            updateTreatmentRecommendations(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours);
         }
 
         // 計算應服用量
@@ -1453,144 +1219,32 @@
             }
         }
 
-        // 計算剩餘療程
-        function calculateRemaining(renal, currentDoseNum, totalDoses) {
-            const remainingDoses = Math.max(0, totalDoses - currentDoseNum);
-            let remainingN = 0;
-            let remainingR = remainingDoses;
-            
-            if (renal === 'normal') {
-                remainingN = remainingDoses * 2;
-            } else if (renal === 'moderate') {
-                remainingN = remainingDoses;
-            } else if (renal === 'severe') {
-                // 重度腎功能不全的特殊計算
-                if (currentDoseNum === 1) {
-                    // 如果目前是第一劑，剩餘的都是 1N+1R
-                    remainingN = remainingDoses;
-                } else {
-                    // 已經過了第一劑，剩餘的都是 1N+1R
-                    remainingN = remainingDoses;
-                }
-            }
-            
-            return {
-                doses: remainingDoses,
-                n: remainingN,
-                r: remainingR
+        // 更新摘要
+        function updateSummary(renal, doseNum, timeHours, shouldN, shouldR, actualN, actualR) {
+            const renalOptions = {
+                'normal': '正常腎功能',
+                'moderate': '中度腎功能不全',
+                'severe': '重度腎功能不全／血液透析'
             };
+
+            document.getElementById('summary-renal').textContent = renalOptions[renal] || '-';
+            document.getElementById('summary-dose').textContent = `第 ${doseNum} 劑次`;
+            document.getElementById('summary-delay').textContent = `${timeHours} 小時`;
+            document.getElementById('summary-should').textContent = `${shouldN}N + ${shouldR}R`;
+            document.getElementById('summary-actual').textContent = `${actualN}N + ${actualR}R`;
         }
 
-        // 計算藥局補發
-        function calculatePharmacyRefill(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
-            // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
-            const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
-            
-            // 如果是 double dose，直接返回無需補發
-            if (isDoubleDose) {
-                return {
-                    text: `無藥品需補發。`,
-                    level: 'success'
-                };
-            }
-            
-            // 1. 多服 Nirmatrelvir
-            if (extraN > 0) {
-                return {
-                    text: `需補發 ${extraN} 顆 Nirmatrelvir。`,
-                    level: 'warning'
-                };
-            }
-            
-            // 2. 多服 Ritonavir
-            if (extraR > 0) {
-                // 計算剩餘劑次
-                const renal = renalFunction.value;
-                const doseNum = parseInt(doseNumber.value) || 1;
-                const totalDoses = (renal === 'severe') ? 5 : 10;
-                const remaining = calculateRemaining(renal, doseNum, totalDoses);
-                
-                // 檢查剩餘劑次是否足夠調整
-                if (remaining.doses >= extraR) {
-                    return {
-                        text: `藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
-                        level: 'warning'
-                    };
-                } else {
-                    return {
-                        text: `藥局無多餘 Ritonavir 可補發且剩餘劑次不足，請諮詢醫師。`,
-                        level: 'warning'
-                    };
-                }
-            }
-            
-            // 3. 其他狀況
-            return {
-                text: `無藥品需補發。`,
-                level: 'success'
-            };
-        }
-
-        // 計算護理餘藥
-        function calculateNursingReturn(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
-            // 觸發條件：漏服超過 8 小時且需要跳過本劑
-            const hasOverdueSkip = (missingN > 0 || missingR > 0) && timeHours > 8;
-            
-            if (!hasOverdueSkip) {
-                return {
-                    text: "無護理餘藥需處理。",
-                    level: "success"
-                };
-            }
-            
-            // 計算需要退回的藥品數量
-            const returnN = Math.max(0, shouldN - actualN);  // 漏服 N 的顆數
-            const returnR = Math.max(0, shouldR - actualR);  // 漏服 R 的顆數
-            
-            // 組合退藥提示文字
-            const returnItems = [];
-            if (returnN > 0) returnItems.push(`Nirmatrelvir ${returnN} 錠`);
-            if (returnR > 0) returnItems.push(`Ritonavir ${returnR} 錠`);
-            
-            if (returnItems.length === 0) {
-                return {
-                    text: "無餘藥需處理（病人已服完或多服）。",
-                    level: "success"
-                };
-            }
-            
-            return {
-                text: `需回收 ${returnItems.join(' 和 ')}，請將多餘藥品送回藥局。`,
-                level: "warning"
-            };
-        }
-
-        // 更新視覺化顯示
-        function updateVisualization(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours, currentDose, totalDoses, renal) {
-            // 更新理論應服用量視覺化
+        // 更新視覺化
+        function updateVisualization(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
+            // 更新藥錠顯示
             updatePillDisplay('should-pills', shouldN, shouldR, 'should');
-            document.getElementById('should-count').textContent = `${shouldN} N + ${shouldR} R`;
+            document.getElementById('should-count').textContent = `${shouldN}N + ${shouldR}R`;
             
-            // 更新實際服用量視覺化
             updatePillDisplay('actual-pills', actualN, actualR, 'actual', shouldN, shouldR);
-            document.getElementById('actual-count').textContent = `${actualN} N + ${actualR} R`;
-            
-            // 更新療程進度
-            const progressPercentage = (currentDose / totalDoses) * 100;
-            document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
-            document.getElementById('progress-text').textContent = `${currentDose}/${totalDoses} 劑次`;
-            
+            document.getElementById('actual-count').textContent = `${actualN}N + ${actualR}R`;
+
             // 更新狀態指示器
             updateStatusIndicator(missingN, missingR, extraN, extraR);
-            
-            // 更新時間指示器
-            updateTimeIndicator(timeHours);
-            
-            // 更新立即補吃提示
-            updateImmediateSupplement(shouldN, shouldR, actualN, actualR, missingN, missingR, timeHours);
-            
-            // 更新剩餘療程時間軸
-            updateRemainingSchedule(renal, currentDose, totalDoses, extraR, timeHours, missingR, missingN);
         }
 
         // 更新藥錠顯示
@@ -1606,13 +1260,13 @@
                 
                 if (type === 'actual') {
                     if (i >= shouldN && i < nCount) {
-                        pill.classList.add('extra'); // 多服
+                        pill.classList.add('extra');
                     } else if (i >= nCount && i < shouldN) {
-                        pill.classList.add('missing'); // 漏服
+                        pill.classList.add('missing');
                     }
                 } else if (type === 'should') {
                     if (i >= nCount) {
-                        pill.classList.add('missing'); // 需要但未服用
+                        pill.classList.add('missing');
                     }
                 }
                 
@@ -1622,7 +1276,7 @@
             // 添加分隔符
             if (maxN > 0 && (rCount > 0 || shouldR > 0)) {
                 const separator = document.createElement('span');
-                separator.textContent = '+';
+                separator.textContent = ' + ';
                 separator.style.margin = '0 8px';
                 separator.style.fontWeight = 'bold';
                 separator.style.color = '#6c757d';
@@ -1637,13 +1291,13 @@
                 
                 if (type === 'actual') {
                     if (i >= shouldR && i < rCount) {
-                        pill.classList.add('extra'); // 多服
+                        pill.classList.add('extra');
                     } else if (i >= rCount && i < shouldR) {
-                        pill.classList.add('missing'); // 漏服
+                        pill.classList.add('missing');
                     }
                 } else if (type === 'should') {
                     if (i >= rCount) {
-                        pill.classList.add('missing'); // 需要但未服用
+                        pill.classList.add('missing');
                     }
                 }
                 
@@ -1655,14 +1309,12 @@
         function updateStatusIndicator(missingN, missingR, extraN, extraR) {
             const indicator = document.getElementById('status-indicator');
 
-            // 1. 無異常
             if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0) {
                 indicator.className = 'status-indicator status-normal';
                 indicator.innerHTML = '<span>✅</span><span>無異常，依原時程給藥</span>';
                 return;
             }
 
-            // 2. 同時有漏服與多服（任一種藥物）
             if ((missingN > 0 || missingR > 0) && (extraN > 0 || extraR > 0)) {
                 let details = [];
                 if (missingN > 0) details.push(`漏服 Nirmatrelvir ${missingN} 顆`);
@@ -1674,7 +1326,6 @@
                 return;
             }
 
-            // 3. 只有多服（可多種藥物）
             if (extraN > 0 || extraR > 0) {
                 let details = [];
                 if (extraN > 0) details.push(`多服 Nirmatrelvir ${extraN} 顆`);
@@ -1684,7 +1335,6 @@
                 return;
             }
 
-            // 4. 只有漏服（可多種藥物）
             if (missingN > 0 || missingR > 0) {
                 let details = [];
                 if (missingN > 0) details.push(`漏服 Nirmatrelvir ${missingN} 顆`);
@@ -1695,21 +1345,18 @@
             }
         }
 
-        // 更新時間指示器
-        function updateTimeIndicator(timeHours) {
-            const timeIndicator = document.getElementById('time-indicator');
-            const clockIcon = timeIndicator.querySelector('.clock-icon');
-            const timeStatus = document.getElementById('time-status');
+        // 更新處理建議
+        function updateTreatmentRecommendations(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
+            // 立即補吃建議
+            updateImmediateSupplement(shouldN, shouldR, actualN, actualR, missingN, missingR, timeHours);
             
-            if (timeHours <= 8) {
-                clockIcon.className = 'clock-icon clock-safe';
-                clockIcon.innerHTML = '✅';
-                timeStatus.textContent = `${timeHours} 小時 - 可以補救`;
-            } else {
-                clockIcon.className = 'clock-icon clock-warning';
-                clockIcon.innerHTML = '⚠️';
-                timeStatus.textContent = `${timeHours} 小時 - 超過補救時間`;
-            }
+            // 藥局補發建議
+            const pharmacyRefill = calculatePharmacyRefill(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours);
+            document.getElementById('pharmacy-text').textContent = pharmacyRefill.text;
+            
+            // 護理餘藥建議
+            const nursingReturn = calculateNursingReturn(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours);
+            document.getElementById('nursing-text').textContent = nursingReturn.text;
         }
 
         // 更新立即補吃提示
@@ -1717,37 +1364,27 @@
             const container = document.getElementById('immediate-supplement');
             container.innerHTML = '';
 
-            // 1. 若有漏服且超過補救時間，優先顯示超時訊息
             if ((missingN > 0 || missingR > 0) && timeHours > 8) {
                 const noActionDiv = document.createElement('div');
                 noActionDiv.className = 'no-action';
                 noActionDiv.innerHTML = `
                     <span>⏰</span>
-                    <span>已超過補救時間，此劑視為未服用，下一劑依原時程</span>
+                    <span>已超過補救時間（${timeHours}小時），此劑視為未服用，下一劑依原時程</span>
                 `;
                 container.appendChild(noActionDiv);
                 return;
             }
 
-            // 2. 在8小時內有漏服，顯示立即補吃
             let needSupplement = false;
             let supplementN = 0;
             let supplementR = 0;
-            let supplementNote = '';
-            if (timeHours <= 8) {
-                if (missingN > 0 || missingR > 0) {
-                    needSupplement = true;
-                    supplementN = missingN;
-                    supplementR = missingR;
-                    if (missingN > 0 && missingR > 0) {
-                        supplementNote = `需要補吃漏服的 ${missingN} 顆 Nirmatrelvir 和 ${missingR} 顆 Ritonavir`;
-                    } else if (missingN > 0) {
-                        supplementNote = `需要補吃漏服的 ${missingN} 顆 Nirmatrelvir`;
-                    } else if (missingR > 0) {
-                        supplementNote = `需要補吃漏服的 ${missingR} 顆 Ritonavir`;
-                    }
-                }
+            
+            if (timeHours <= 8 && (missingN > 0 || missingR > 0)) {
+                needSupplement = true;
+                supplementN = missingN;
+                supplementR = missingR;
             }
+
             if (needSupplement) {
                 const actionDiv = document.createElement('div');
                 actionDiv.className = 'immediate-action';
@@ -1755,200 +1392,262 @@
                 actionDiv.innerHTML = `
                     <div class="action-header">
                         <span class="action-icon">🚨</span>
-                        <span>立即補吃</span>
+                        <span>立即補吃建議</span>
                     </div>
-                    <div class="countdown-timer">
-                        <span class="timer-icon">⏰</span>
-                        <span>還有 ${timeRemaining.toFixed(1)} 小時補救時間</span>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <strong style="color: #b45309; font-size: 18px;">
+                            立即補吃：${supplementN > 0 ? supplementN + ' 顆 Nirmatrelvir' : ''}${supplementN > 0 && supplementR > 0 ? ' + ' : ''}${supplementR > 0 ? supplementR + ' 顆 Ritonavir' : ''}
+                        </strong>
                     </div>
-                    <div class="supplement-pills">
-                        ${generateSupplementPills(supplementN, supplementR)}
-                    </div>
-                    <div class="supplement-count">
-                        立即補吃：${supplementN > 0 ? supplementN + ' 顆 Nirmatrelvir' : ''}${supplementN > 0 && supplementR > 0 ? ' + ' : ''}${supplementR > 0 ? supplementR + ' 顆 Ritonavir' : ''}
+                    <div style="text-align: center; color: #856404;">
+                        ⏰ 還有 ${timeRemaining.toFixed(1)} 小時補救時間
                     </div>
                 `;
                 container.appendChild(actionDiv);
                 return;
             }
 
-            // 3. 其他情境
             const noActionDiv = document.createElement('div');
             noActionDiv.className = 'no-action';
-            // 僅當所有為零（初始狀態）才顯示"請輸入實際服藥量"
             const extraN = Math.max(0, actualN - shouldN);
             const extraR = Math.max(0, actualR - shouldR);
+            
             if (missingN === 0 && missingR === 0 && extraN === 0 && extraR === 0 && actualN === 0 && actualR === 0) {
-                noActionDiv.innerHTML = `
-                    <span>ℹ️</span>
-                    <span>請輸入實際服藥量</span>
-                `;
+                noActionDiv.innerHTML = `<span>ℹ️</span><span>等待輸入實際服藥量</span>`;
             } else if (missingN === 0 && missingR === 0) {
                 if (actualN > shouldN || actualR > shouldR) {
-                    // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
                     const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
                     noActionDiv.innerHTML = `
                         <span>⚠️</span>
                         <span>建議監測臨床反應，${isDoubleDose ? '下一劑建議跳過' : '下一劑依原時程'}</span>
                     `;
                 } else {
-                    noActionDiv.innerHTML = `
-                        <span>✅</span>
-                        <span>服藥正確，無需立即行動</span>
-                    `;
+                    noActionDiv.innerHTML = `<span>✅</span><span>服藥正確，無需立即行動</span>`;
                 }
             } else {
-                noActionDiv.innerHTML = `
-                    <span>ℹ️</span>
-                    <span>請依照處理建議執行</span>
-                `;
+                noActionDiv.innerHTML = `<span>ℹ️</span><span>請依照處理建議執行</span>`;
             }
             container.appendChild(noActionDiv);
         }
 
-        // 生成補吃藥錠的視覺化
-        function generateSupplementPills(nCount, rCount) {
-            let html = '';
-            
-            // 添加 Nirmatrelvir 藥錠
-            for (let i = 0; i < nCount; i++) {
-                html += '<div class="supplement-pill nirmatrelvir"></div>';
-            }
-            
-            // 添加箭頭和 + 號
-            if (nCount > 0 && rCount > 0) {
-                html += '<span class="supplement-arrow">+</span>';
-            }
-            
-            // 添加 Ritonavir 藥錠
-            for (let i = 0; i < rCount; i++) {
-                html += '<div class="supplement-pill ritonavir"></div>';
-            }
-            
-            return html;
-        }
-
-        // 更新剩餘療程時間軸
-        function updateRemainingSchedule(renal, currentDose, totalDoses, extraR, timeHours, missingR, missingN) {
-            const timeline = document.getElementById('dose-timeline');
-            const summary = document.getElementById('schedule-summary');
-            timeline.innerHTML = '';
-            
-            const remainingDoses = totalDoses - currentDose;
-            
-            if (remainingDoses <= 0) {
-                summary.textContent = '療程已完成';
-                return;
-            }
-
-            // 檢查是否為完整劑量多服（N和R都是理論值的兩倍）
-            const shouldDose = calculateShouldDose(renal, currentDose);
-            const actualNValue = parseInt(actualN.value) || 0;
-            const actualRValue = parseInt(actualR.value) || 0;
-            const isDoubleDose = actualNValue >= shouldDose.n * 2 && actualRValue >= shouldDose.r * 2;
-
-            // 計算需要調整的劑次
-            let ritonavirReduction = 0;
-            let reductionStartFrom = remainingDoses;
-            let skipNextDose = false;
+        // 計算藥局補發
+        function calculatePharmacyRefill(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
+            const isDoubleDose = actualN >= shouldN * 2 && actualR >= shouldR * 2;
             
             if (isDoubleDose) {
-                // 如果是完整劑量多服，跳過下一劑
-                skipNextDose = true;
+                return { text: `無藥品需補發。`, level: 'success' };
+            }
+            
+            if (extraN > 0) {
+                return { text: `需補發 ${extraN} 顆 Nirmatrelvir。`, level: 'warning' };
+            }
+            
+            if (extraR > 0) {
+                const renal = formData.renalFunction;
+                const doseNum = formData.doseNumber;
+                const totalDoses = (renal === 'severe') ? 5 : 10;
+                const remaining = calculateRemaining(renal, doseNum, totalDoses);
+                
+                if (remaining.doses >= extraR) {
+                    return {
+                        text: `藥局無多餘 Ritonavir 可補發，建議${extraR === 1 ? '最後一劑' : `最後 ${extraR} 劑各`}少服用 1 顆 Ritonavir。`,
+                        level: 'warning'
+                    };
+                } else {
+                    return {
+                        text: `藥局無多餘 Ritonavir 可補發且剩餘劑次不足，請諮詢醫師。`,
+                        level: 'warning'
+                    };
+                }
+            }
+            
+            return { text: `無藥品需補發。`, level: 'success' };
+        }
+
+        // 計算護理餘藥
+        function calculateNursingReturn(shouldN, shouldR, actualN, actualR, missingN, missingR, extraN, extraR, timeHours) {
+            const hasOverdueSkip = (missingN > 0 || missingR > 0) && timeHours > 8;
+            
+            if (!hasOverdueSkip) {
+                return { text: "無護理餘藥需處理。", level: "success" };
+            }
+            
+            const returnN = Math.max(0, shouldN - actualN);
+            const returnR = Math.max(0, shouldR - actualR);
+            
+            const returnItems = [];
+            if (returnN > 0) returnItems.push(`Nirmatrelvir ${returnN} 錠`);
+            if (returnR > 0) returnItems.push(`Ritonavir ${returnR} 錠`);
+            
+            if (returnItems.length === 0) {
+                return { text: "無餘藥需處理（病人已服完或多服）。", level: "success" };
+            }
+            
+            return {
+                text: `需回收 ${returnItems.join(' 和 ')}，請將多餘藥品送回藥局。`,
+                level: "warning"
+            };
+        }
+
+        // 計算剩餘療程
+        function calculateRemaining(renal, currentDoseNum, totalDoses) {
+            const remainingDoses = Math.max(0, totalDoses - currentDoseNum);
+            let remainingN = 0;
+            let remainingR = remainingDoses;
+            
+            if (renal === 'normal') {
+                remainingN = remainingDoses * 2;
+            } else if (renal === 'moderate') {
+                remainingN = remainingDoses;
+            } else if (renal === 'severe') {
+                if (currentDoseNum === 1) {
+                    remainingN = remainingDoses;
+                } else {
+                    remainingN = remainingDoses;
+                }
+            }
+            
+            return { doses: remainingDoses, n: remainingN, r: remainingR };
+        }
+
+        // 產生交班內容
+        function generateHandover() {
+            // 使用和原本 generateHandover 相同，但不包含 modal 內容，直接抓取 step-6 的內容
+            // 這裡需要取得交班欄位（可放在全域或移至 step-6 內）
+            // 為向下相容，維持原本的抓取方式
+            const pharmacistID = document.getElementById('pharmacist-id') ? document.getElementById('pharmacist-id').value.trim() : '';
+            const reviewerID = document.getElementById('reviewer-id') ? document.getElementById('reviewer-id').value.trim() : '';
+            const medicalRecord = document.getElementById('modal-medical-record') ? document.getElementById('modal-medical-record').value.trim() : '';
+            const remark = document.getElementById('modal-remark') ? document.getElementById('modal-remark').value.trim() : '';
+
+            // 計算時間差
+            let timeDiffVal = '0.00';
+            if (formData.scheduledTime && formData.processingTime) {
+                const scheduledDate = new Date(formData.scheduledTime);
+                const procDate = new Date(formData.processingTime);
+                const diffMs = procDate - scheduledDate;
+                const hours = diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
+                timeDiffVal = String(Math.round(hours * 100) / 100);
+            }
+
+            // 獲取其他資訊
+            const renalOptions = {
+                'normal': '正常：早晚各服用 2N+1R，共 10 劑次',
+                'moderate': '中度不全：早晚各服用 1N+1R，共 10 劑次',
+                'severe': '重度不全／血液透析：僅早上服用，第 1 劑 2N+1R，後 4 劑 1N+1R，共 5 劑次'
+            };
+            const renalStatus = renalOptions[formData.renalFunction] || '';
+
+            // 獲取狀態和建議
+            const statusSpans = document.getElementById('status-indicator').querySelectorAll('span');
+            const statusText = statusSpans.length > 1 ? statusSpans[1].innerText.trim() : '';
+
+            const immediateDiv = document.getElementById('immediate-supplement');
+            let immediateText = '';
+            // 如果有立即補吃區塊，抓取 strong 標籤的文字
+            const actionStrong = immediateDiv.querySelector('.immediate-action strong');
+            if (actionStrong) {
+                immediateText = actionStrong.innerText.trim();
             } else {
-                // 其他多服R的情況，在最後幾劑減少R
-                ritonavirReduction = extraR;
-                reductionStartFrom = remainingDoses - extraR + 1;
+                // 否則，如果有 no-action，取第二個 span 的文字（排除 icon）
+                const noActionSpans = immediateDiv.querySelectorAll('.no-action span');
+                if (noActionSpans.length > 1) {
+                    immediateText = noActionSpans[1].innerText.trim();
+                } else {
+                    immediateText = '無處理建議';
+                }
             }
 
-            // 判斷是否需要調整劑次編號
-            let skipCurrentNote = '';
-            if ((missingR > 0 || missingN > 0) && timeHours > 8) {
-                skipCurrentNote = '（當前異常劑次視為未服用）';
+            const pharmacyTextValue = document.getElementById('pharmacy-text').innerText.trim();
+            const nursingTextValue = document.getElementById('nursing-text').innerText.trim();
+
+            // 組成交班內容
+            const handoverContent = `Paxlovid給藥異常交班
+處理藥師員工號／姓名：${pharmacistID}
+覆核藥師員工號／姓名：${reviewerID}
+病歷號：${medicalRecord}
+腎功能狀態：${renalStatus}
+給藥錯誤的劑次：${formData.doseNumber}
+原先預定給藥時間：${formData.scheduledTime}
+處理時間：${formData.processingTime}
+距離給藥錯誤的時間（小時）：${timeDiffVal}
+實際服藥量：${formData.actualN} 顆 Nirmatrelvir, ${formData.actualR} 顆 Ritonavir
+異常狀態：${statusText}
+處理建議：${immediateText}
+藥局補發提示：${pharmacyTextValue}
+護理餘藥提示：${nursingTextValue}
+備註：${remark}`;
+
+            // 顯示交班內容
+            const handoverPre = document.getElementById('handover-text');
+            handoverPre.textContent = handoverContent;
+
+            // 複製到剪貼簿
+            copyToClipboard(handoverContent);
+        }
+
+        // 複製交班內容
+        function copyHandoverContent() {
+            const content = document.getElementById('handover-text').textContent;
+            copyToClipboard(content);
+        }
+
+        // 複製到剪貼簿
+        function copyToClipboard(text) {
+            try {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess();
+                });
+            } catch (e) {
+                // 備用方法
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess();
             }
+        }
 
-            // 生成剩餘劑次的視覺化
-            for (let i = 1; i <= remainingDoses; i++) {
-                const doseNum = currentDose + i;
-                const doseDay = document.createElement('div');
-                
-                // 計算該劑次的藥量
-                const normalDose = calculateShouldDose(renal, doseNum);
-                let displayN = normalDose.n;
-                let displayR = normalDose.r;
-                let isModified = false;
-                let noteText = '';
+        // 列印交班內容（將內容打開新視窗並觸發列印）
+        function printHandover() {
+            const content = document.getElementById('handover-text').textContent;
+            // 建立一個新的視窗
+            const printWindow = window.open('', '_blank');
+            // 寫入要列印的內容，使用 <pre> 保留換行
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>交班內容列印</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        pre { white-space: pre-wrap; word-wrap: break-word; font-size: 14px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>交班內容</h2>
+                    <pre>${content}</pre>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            // 等待新視窗載入完成後執行列印
+            printWindow.onload = function() {
+                printWindow.focus();
+                printWindow.print();
+            };
+        }
 
-                // 檢查是否需要跳過此劑次
-                if (skipNextDose && i === 1) {
-                    displayN = 0;
-                    displayR = 0;
-                    isModified = true;
-                    noteText = '跳過此劑';
-                }
-                // 檢查是否需要減少 Ritonavir
-                else if (ritonavirReduction > 0 && i >= reductionStartFrom) {
-                    displayR = normalDose.r - 1;
-                    isModified = true;
-                    noteText = '少1R';
-                }
-
-                doseDay.className = `dose-day ${isModified ? 'modified' : ''}`;
-                
-                const pillsContainer = document.createElement('div');
-                pillsContainer.className = 'dose-pills';
-                
-                // 添加 Nirmatrelvir 藥錠
-                for (let n = 0; n < displayN; n++) {
-                    const pill = document.createElement('div');
-                    pill.className = 'mini-pill nirmatrelvir';
-                    pillsContainer.appendChild(pill);
-                }
-                
-                // 添加 + 號
-                if (displayN > 0 && displayR > 0) {
-                    const plus = document.createElement('span');
-                    plus.textContent = '+';
-                    plus.style.margin = '0 4px';
-                    plus.style.fontSize = '10px';
-                    plus.style.color = '#6c757d';
-                    pillsContainer.appendChild(plus);
-                }
-                
-                // 添加 Ritonavir 藥錠
-                for (let r = 0; r < Math.max(displayR, normalDose.r); r++) {
-                    const pill = document.createElement('div');
-                    pill.className = 'mini-pill ritonavir';
-                    if (r >= displayR && r < normalDose.r) {
-                        pill.classList.add('reduced');
-                    }
-                    pillsContainer.appendChild(pill);
-                }
-
-                doseDay.innerHTML = `
-                    <div class="dose-number">${doseNum}</div>
-                `;
-                doseDay.appendChild(pillsContainer);
-                
-                if (noteText) {
-                    const note = document.createElement('div');
-                    note.className = 'dose-note';
-                    note.textContent = noteText;
-                    doseDay.appendChild(note);
-                }
-
-                timeline.appendChild(doseDay);
+        // 顯示複製成功動畫
+        function showCopySuccess() {
+            const handoverContent = document.getElementById('handover-text');
+            if (handoverContent) {
+                handoverContent.classList.add('copy-success');
+                setTimeout(() => {
+                    handoverContent.classList.remove('copy-success');
+                }, 500);
             }
-
-            // 更新總結文字
-            let summaryText = `剩餘 ${remainingDoses} 劑次${skipCurrentNote}`;
-            if (skipNextDose) {
-                summaryText += `，建議跳過下一劑`;
-            }
-            if (ritonavirReduction > 0) {
-                summaryText += `，${ritonavirReduction === 1 ? '最後一劑' : `最後 ${ritonavirReduction} 劑各`}少服用 1 顆 Ritonavir`;
-            }
-            summary.textContent = summaryText;
         }
     </script>
 </body>
